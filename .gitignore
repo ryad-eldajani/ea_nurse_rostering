@@ -7,7 +7,7 @@ config.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
+#*.jar # track also external libraries
 *.war
 *.ear
 
@@ -36,7 +36,6 @@ hs_err_pid*
 
 # Gradle:
 .idea/**/gradle.xml
-.idea/**/libraries
 
 # Mongo Explorer plugin:
 .idea/**/mongoSettings.xml

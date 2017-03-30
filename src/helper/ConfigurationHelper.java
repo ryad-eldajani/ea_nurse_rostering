@@ -48,7 +48,7 @@ public class ConfigurationHelper {
             configuration.load(in);
             in.close();
         } else {
-            throw new Exception("Properties instance already instantiated.");
+            throw new Exception("Properties instance already available.");
         }
     }
 
