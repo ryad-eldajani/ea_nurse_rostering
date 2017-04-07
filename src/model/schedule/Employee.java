@@ -1,4 +1,4 @@
-package model;
+package model.schedule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,6 +103,23 @@ public class Employee {
 
     public void setShiftOffRequests(List<ShiftOff> shiftOffRequests) {
         this.shiftOffRequests = shiftOffRequests;
+    }
+
+    /**
+     * Returns true, if employee has required skills for a specific shift type.
+     * @param shiftType ShiftType instance
+     * @return True, if employee has required skills for a specific shift type
+     */
+    public boolean hasRequiredSkillsForShiftType(ShiftType shiftType) {
+        // Check, if employee has required skill.
+        boolean hasSkills = false;
+        for (Skill skill: skills) {
+            if (shiftType.getRequiredSkills().contains(skill)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

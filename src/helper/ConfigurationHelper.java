@@ -64,11 +64,55 @@ public class ConfigurationHelper {
     /**
      * Returns a configuration property for a specific key.
      * @param key Configuration key.
-     * @param fallBack Fall back value.
+     * @param fallback Fallback value.
      * @return Configuration property for key with fallback.
      */
-    public String getProperty(String key, String fallBack) {
-        return configuration.getProperty(key, fallBack);
+    public String getProperty(String key, String fallback) {
+        return configuration.getProperty(key, fallback);
+    }
+
+    /**
+     * Returns a configuration property as boolean.
+     * @param key Configuration key.
+     * @return Configuration property.
+     */
+    public boolean getPropertyBoolean(String key) {
+        String booleanValue = configuration.getProperty(key);
+        if (booleanValue == null || booleanValue.trim().equals("")) {
+            return false;
+        }
+
+        return Boolean.valueOf(configuration.getProperty(key));
+    }
+
+    /**
+     * Returns a configuration property as integer.
+     * @param key Configuration key.
+     * @param fallback Fallback value.
+     * @return Configuration property for key with fallback.
+     */
+    public int getPropertyInteger(String key, int fallback) {
+        String intNumber = configuration.getProperty(key);
+        if (intNumber == null || intNumber.trim().equals("")) {
+            return fallback;
+        }
+
+        return Integer.valueOf(configuration.getProperty(key));
+    }
+
+    /**
+     * Returns a configuration property as long.
+     * @param key Configuration key.
+     * @param fallback Fallback value.
+     * @return Configuration property for key with fallback.
+     */
+    public long getPropertyLong(String key, long fallback) {
+        String longNumber = configuration.getProperty(key);
+        if (longNumber == null || longNumber.trim().equals("")) {
+            return fallback;
+        }
+
+        return Long.getLong(configuration.getProperty(key));
     }
 
     /**

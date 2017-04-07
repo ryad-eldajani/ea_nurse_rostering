@@ -3,9 +3,8 @@ package parser;
 import helper.ArrayHelper;
 import helper.ConfigurationHelper;
 import helper.DateTimeHelper;
-import helper.DayHelper;
-import model.*;
-import model.Attribute;
+import model.schedule.*;
+import model.schedule.Attribute;
 import nu.xom.*;
 
 import java.io.File;
@@ -58,7 +57,7 @@ public class XmlParser implements IParser {
                     if (element.getChild(j) instanceof Element) {
                         Element requirementInfo = (Element) element.getChild(j);
                         if (requirementInfo.getLocalName().equals("Day")) {
-                            dayCover.setDay(DayHelper.getInstance().getDayByName(requirementInfo.getValue()));
+                            dayCover.setDay(DateTimeHelper.getInstance().getDayByName(requirementInfo.getValue()));
                         } else if (requirementInfo.getLocalName().equals("Cover")) {
                             int preferred = Integer.parseInt(
                                             requirementInfo.getChildElements("Preferred").get(0).getValue());
@@ -132,7 +131,7 @@ public class XmlParser implements IParser {
                             parseUnwantedPatterns(contractInfo, contract);
                         } else if (contractInfo.getLocalName().equals("WeekendDefinition")) {
                             contract.setWeekendDefinition(
-                                    DayHelper.getInstance().getDayListFromString(contractInfo.getValue()));
+                                    DateTimeHelper.getInstance().getDayListFromString(contractInfo.getValue()));
                         }
                     }
                 }

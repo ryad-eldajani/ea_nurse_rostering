@@ -1,7 +1,11 @@
 package start;
 
+import helper.ClassLoaderHelper;
 import helper.ConfigurationHelper;
-import model.SchedulingPeriod;
+import model.ea.EvolutionaryCycle;
+import model.ea.Individual;
+import model.ea.Population;
+import model.schedule.SchedulingPeriod;
 import parser.IParser;
 
 /**
@@ -34,7 +38,10 @@ public class Start {
      */
     public static void main(String[] args) {
         SchedulingPeriod period = getInstance().parseSchedulingPeriod();
-        System.out.print(period);
+        Population population = (new EvolutionaryCycle()).evolutionize(period);
+        Individual best = population.sortByFitness().getPool().get(0);
+
+        System.out.print("Best solution: " + best);
     }
 
     /**
@@ -42,19 +49,10 @@ public class Start {
      * @return SchedulingPeriod instance or null.
      */
     private SchedulingPeriod parseSchedulingPeriod() {
-        try {
-            // try to instantiate the parser object
-            Class parserClass = Class.forName("parser."
-                    + ConfigurationHelper.getInstance().getProperty("Parser", "XmlParser"));
-            IParser parser = (IParser) parserClass.newInstance();
+        IParser parser = ClassLoaderHelper.getInstance().getParser();
 
-            // try to load the desired scheduling period
-            return parser.loadFile("data/"
-                    + ConfigurationHelper.getInstance().getProperty("PeriodFile", "toy1.xml"));
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        // try to load the desired scheduling period
+        return parser.loadFile("data/"
+                + ConfigurationHelper.getInstance().getProperty("PeriodFile", "toy1.xml"));
     }
 }

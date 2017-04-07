@@ -1,4 +1,19 @@
-# Please copy/rename this file to: config.properties
+### Please copy/rename this file to: config.properties ###
+
+## General settings for the application ##
 Parser=XmlParser
 PeriodFile=toy1.xml
 WeightedAttributes=SingleAssignmentPerDay,MaxNumAssignments,MinNumAssignments,MaxConsecutiveWorkingDays,MinConsecutiveWorkingDays,MaxConsecutiveFreeDays,MinConsecutiveFreeDays,MaxConsecutiveWorkingWeekends,MinConsecutiveWorkingWeekends,MaxWorkingWeekendsInFourWeeks,CompleteWeekends,IdenticalShiftTypesDuringWeekend,NoNightShiftBeforeFreeWeekend,AlternativeSkillCategory
+ProgressBarWidth=30
+RandomSeed=
+
+## Parameters for the evolutionary algorithm ##
+MaxIterations=1000
+IndividualsPerPopulation=10
+UseRecombination=true
+UseMutation=true
+ConstructionHeuristic=SimpleConstructionHeuristic
+MatingSelectionOperator=SimpleMatingSelectionOperator
+EnvironmentSelectionOperator=SimpleEnvironmentSelectionOperator
+MutationOperator=SimpleMutationOperator
+RecombinationOperator=SimpleRecombinationOperator

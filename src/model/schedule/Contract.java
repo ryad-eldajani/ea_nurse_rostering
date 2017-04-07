@@ -1,4 +1,4 @@
-package model;
+package model.schedule;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

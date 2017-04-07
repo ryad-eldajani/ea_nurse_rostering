@@ -1,6 +1,6 @@
 package parser;
 
-import model.*;
+import model.schedule.SchedulingPeriod;
 
 /**
  * Class to parse an Text scheduling instance.

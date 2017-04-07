@@ -1,41 +1,20 @@
-package model;
+package model.schedule;
 
 import java.util.Date;
 
 /**
- * ShiftType off request model.
+ * Day off request model.
  */
-public class ShiftOff {
+public class DayOff {
     /**
      * Penalty weight if constraint is unsatisfied.
      */
     private int weight;
 
     /**
-     * Shift type for requested shift off.
-     */
-    private ShiftType shiftType;
-
-    /**
      * Requested day off date.
      */
     private Date date;
-
-    /**
-     * Returns the shift type.
-     * @return ShiftType instance.
-     */
-    public ShiftType getShiftType() {
-        return shiftType;
-    }
-
-    /**
-     * Sets the shift type.
-     * @param shiftType ShiftType instance.
-     */
-    public void setShiftType(ShiftType shiftType) {
-        this.shiftType = shiftType;
-    }
 
     /**
      * Returns penalty weight.

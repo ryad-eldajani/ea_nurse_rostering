@@ -1,8 +1,11 @@
-package model;
+package model.schedule;
+
+import helper.DateTimeHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Scheduling period model.
@@ -105,8 +108,17 @@ public class SchedulingPeriod {
      * @return Employee instance or null.
      */
     public Employee getEmployeeById(String id) {
+        return getEmployeeById(Integer.parseInt(id));
+    }
+
+    /**
+     * Returns an Employee instance by identifier as integer.
+     * @param id Employee identifier as integer.
+     * @return Employee instance or null.
+     */
+    public Employee getEmployeeById(int id) {
         for (Employee employee: employees) {
-            if (employee.getId() == Integer.parseInt(id)) {
+            if (employee.getId() == id) {
                 return employee;
             }
         }
@@ -128,6 +140,30 @@ public class SchedulingPeriod {
      */
     public void addShiftType(ShiftType shiftType) {
         shiftTypes.add(shiftType);
+    }
+
+    /**
+     * Returns cover information by day.
+     * @param day Day instance
+     * @return Map instance or null.
+     */
+    public Map<ShiftType, Integer> getCoversByDay(Day day) {
+        for (Cover cover: dayCovers) {
+            if (cover.getDay().equals(day)) {
+                return cover.getCovers();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns cover information by day.
+     * @param date Date instance
+     * @return Map instance or null.
+     */
+    public Map<ShiftType, Integer> getCoversByDate(Date date) {
+        return getCoversByDay(DateTimeHelper.getInstance().getDayByDate(date));
     }
 
     /***

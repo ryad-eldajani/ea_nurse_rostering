@@ -1,6 +1,6 @@
-package model;
+package model.schedule;
 
-import helper.DayHelper;
+import helper.DateTimeHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,9 +38,10 @@ public class ShiftType {
     @Override
     public String toString() {
         return "ID: " + id + ", " +
-                "start time: " + DayHelper.getInstance().getTimeString(startTime) + ", " +
-                "end time: " + DayHelper.getInstance().getTimeString(endTime) + ", " +
-                "description: " + description;
+                "start time: " + DateTimeHelper.getInstance().getTimeString(startTime) + ", " +
+                "end time: " + DateTimeHelper.getInstance().getTimeString(endTime) + ", " +
+                "description: " + description + ", " +
+                "required skills: " + requiredSkills;
     }
 
     /***
