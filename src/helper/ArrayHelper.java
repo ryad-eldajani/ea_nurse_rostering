@@ -38,4 +38,38 @@ public class ArrayHelper {
 
         return false;
     }
+
+    /**
+     * Reverses an array.
+     * @param array Array to reverses
+     * @return Reversed array
+     */
+    public Object[] reverse(Object[] array) {
+        for(int i = 0; i < array.length / 2; i++) {
+            Object temp = array[i];
+            array[i] = array[array.length - i - 1];
+            array[array.length - i - 1] = temp;
+        }
+
+        return array;
+    }
+
+    /**
+     * Outputs an array as a string separated by separator
+     * @param array Array to output
+     * @param separator Separator
+     * @return Array as string
+     */
+    public String getString(Object[] array, String separator) {
+        StringBuilder out = new StringBuilder();
+
+        for (int i = 0; i < array.length; i++) {
+            out.append(array[i].toString());
+            if (i < array.length - 1) {
+                out.append(separator);
+            }
+        }
+
+        return out.toString();
+    }
 }

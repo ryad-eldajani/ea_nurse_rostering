@@ -6,6 +6,7 @@ import model.ea.operators.IRecombinationOperator;
 import model.ea.construction.IConstructionHeuristic;
 import model.ea.operators.IMatingSelectionOperator;
 import parser.IParser;
+import writer.IWriter;
 
 /**
  * Helper methods for loading correct classes.
@@ -61,6 +62,19 @@ public class ClassLoaderHelper {
         }
 
         return (IParser) instance;
+    }
+
+    /**
+     * Returns the file writer for the solution file.
+     * @return Instance that implements IWriter
+     */
+    public IWriter getWriter() {
+        Object instance = getLoadedClass("Writer", "XmlWriter", "writer.");
+        if (instance == null) {
+            return null;
+        }
+
+        return (IWriter) instance;
     }
 
     /**

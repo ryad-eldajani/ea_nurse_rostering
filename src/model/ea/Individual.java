@@ -60,16 +60,13 @@ public class Individual {
      * @return True, if this individual is a feasible solution
      */
     public boolean isFeasible() {
-        boolean feasible = true;
-
         // check, if hard  constraints for each planned day are satisfied
         for (DayRoster dayRoster: roster) {
             List<Employee> plannedEmployees = new ArrayList<Employee>();
             for (Employee employee: dayRoster.getDayRoster().values()) {
                 // if the employee already has a shift this day, this solution is not feasible
                 if (plannedEmployees.contains(employee)) {
-                    feasible = false;
-                    break;
+                    return false;
                 }
 
                 plannedEmployees.add(employee);
@@ -77,16 +74,12 @@ public class Individual {
 
             // check if demand for the day is satisfied
             if (!dayRoster.isDemandedShiftAssignedToNurse()) {
-                feasible = false;
-            }
-
-            // if last planned day has unsatisfied feasibility, we can abort right now
-            if (!feasible) {
-                break;
+                return false;
             }
         }
 
-        return feasible;
+        // no hard constraint is unsatisfied, this is a feasible solution
+        return true;
     }
 
     /**

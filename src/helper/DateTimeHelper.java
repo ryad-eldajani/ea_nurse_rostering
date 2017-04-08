@@ -171,14 +171,41 @@ public class DateTimeHelper {
     /**
      * Returns a time for a Date instance in HH:MM:SS format.
      * @param date Date instance
-     * @return String in HH:MM:SS format.
+     * @param separator Separator
+     * @return String in HH[separator]MM[separator]SS format.
      */
-    public String getTimeString(Date date) {
+    public String getTimeString(Date date, String separator) {
         Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
         calendar.setTime(date);   // assigns calendar to given date
         return String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY))
-                + ":" + String.format("%02d", calendar.get(Calendar.MINUTE))
-                + ":" + String.format("%02d", calendar.get(Calendar.SECOND));
+                + separator + String.format("%02d", calendar.get(Calendar.MINUTE))
+                + separator + String.format("%02d", calendar.get(Calendar.SECOND));
+    }
+
+    /**
+     * Returns a time for a Date instance in HH:MM:SS format.
+     * @param date Date instance
+     * @return String in HH:MM:SS format.
+     */
+    public String getTimeString(Date date) {
+        return getTimeString(date, ":");
+    }
+
+    /**
+     * Returns the current time in HH[separator]MM[separator]SS format.
+     * @param separator Separator
+     * @return String in HH[separator]MM[separator]SS format.
+     */
+    public String getTimeString(String separator) {
+        return getTimeString(new Date(), separator);
+    }
+
+    /**
+     * Returns the current time in HH:MM:SS format.
+     * @return String in HH:MM:SS format.
+     */
+    public String getTimeString() {
+        return getTimeString(new Date());
     }
 
     /**
@@ -193,13 +220,40 @@ public class DateTimeHelper {
     /**
      * Returns a date for a Date instance in DD.MM.YYYY format.
      * @param date Date instance
-     * @return String in DD.MM.YYYY format.
+     * @param separator Separator
+     * @return String in DD[separator]MM[separator]YYYY format.
      */
-    public String getDateString(Date date) {
+    public String getDateString(Date date, String separator) {
         Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
         calendar.setTime(date);   // assigns calendar to given date
         return String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH))
-                + "." + String.format("%02d", calendar.get(Calendar.MONTH) + 1) // +1, as zero indexed
-                + "." + String.format("%02d", calendar.get(Calendar.YEAR));
+                + separator + String.format("%02d", calendar.get(Calendar.MONTH) + 1) // +1, as zero indexed
+                + separator + String.format("%02d", calendar.get(Calendar.YEAR));
+    }
+
+    /**
+     * Returns a date for a Date instance in DD.MM.YYYY format.
+     * @param date Date instance
+     * @return String in DD.MM.YYYY format.
+     */
+    public String getDateString(Date date) {
+        return getDateString(date, ".");
+    }
+
+    /**
+     * Returns the current date in DD[separator]MM[separator]YYYY format.
+     * @param separator Separator
+     * @return String in DD[separator]MM[separator]YYYY format.
+     */
+    public String getDateString(String separator) {
+        return getDateString(new Date(), separator);
+    }
+
+    /**
+     * Returns the current date in DD.MM.YYYY format.
+     * @return String in DD.MM.YYYY format.
+     */
+    public String getDateString() {
+        return getDateString(new Date());
     }
 }
