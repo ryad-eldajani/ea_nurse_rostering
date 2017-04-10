@@ -33,10 +33,10 @@ public class RandomConstructionHeuristic implements IConstructionHeuristic {
                         || dayRoster.isEmployeePlanned(employee));
 
                 // the random chosen employee fits the criteria, add to day roster
-                dayRoster.getDayRoster().put(shiftType, employee);
+                dayRoster.addToDayRoster(shiftType, employee);
             }
             // finally add the generated day roster to the individual
-            individual.getDayRosters().add(dayRoster);
+            individual.addDayRoster(dayRoster);
         }
 
         return individual;

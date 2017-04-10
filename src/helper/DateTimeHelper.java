@@ -57,13 +57,25 @@ public class DateTimeHelper {
     }
 
     /**
+     * Returns the number of days between start and end date.
+     * @param startDate Date instance
+     * @param endDate Date instance
+     * @return Number of days between start and end date
+     */
+    public int getNumberOfDays(Date startDate, Date endDate) {
+        long daysDifference = endDate.getTime() - startDate.getTime();
+
+        // +1 as we include the last day
+        return (int) TimeUnit.DAYS.convert(daysDifference, TimeUnit.MILLISECONDS) + 1;
+    }
+
+    /**
      * Returns the number of days between start and end date of a scheduling period.
      * @param period SchedulingPeriod instance
      * @return Number of days between start and end date
      */
     public int getNumberOfDays(SchedulingPeriod period) {
-        long daysDifference = period.getEndDate().getTime() - period.getStartDate().getTime();
-        return (int) TimeUnit.DAYS.convert(daysDifference, TimeUnit.MILLISECONDS);
+        return getNumberOfDays(period.getStartDate(), period.getEndDate());
     }
 
     /**
@@ -250,10 +262,71 @@ public class DateTimeHelper {
     }
 
     /**
+     * Returns a reversed date in YYYY[separator]MM[separator]DD format.
+     * @param date Date instance
+     * @param separator Separator
+     * @return String in YYYY[separator]MM[separator]DD format
+     */
+    public String getDateStringReversed(Date date, String separator) {
+        return ArrayHelper.getInstance().getString(
+                ArrayHelper.getInstance().reverse(
+                        getDateString(date).split("\\.")), separator);
+    }
+
+    /**
+     * Returns a reversed date in YYYY[separator]MM[separator]DD format.
+     * @param separator Separator
+     * @return String in YYYY[separator]MM[separator]DD format
+     */
+    public String getDateStringReversed(String separator) {
+        return ArrayHelper.getInstance().getString(
+                ArrayHelper.getInstance().reverse(
+                        getDateString(new Date()).split("\\.")), separator);
+    }
+
+    /**
      * Returns the current date in DD.MM.YYYY format.
      * @return String in DD.MM.YYYY format.
      */
     public String getDateString() {
         return getDateString(new Date());
+    }
+
+    /**
+     * Returns a list of Date instances between startDate and endDate
+     * @param startDate Date instance
+     * @param endDate Date instance
+     * @return List of Date instances
+     */
+    public List<Date> getListOfDates(Date startDate, Date endDate) {
+        Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
+        calendar.setTime(startDate);
+
+        List<Date> dates = new ArrayList<Date>();
+        for (int i = 0; i < getNumberOfDays(startDate, endDate); i++) {
+            dates.add(calendar.getTime());
+            calendar.add(Calendar.DATE, 1);
+        }
+
+        return dates;
+    }
+
+    /**
+     * Returns a list of Date instances between startDate and endDate
+     * @param period SchedulingPeriod instance
+     * @return List of Date instances
+     */
+    public List<Date> getListOfDates(SchedulingPeriod period) {
+        return getListOfDates(period.getStartDate(), period.getEndDate());
+    }
+
+    /**
+     * Returns true, if the day of the Date instance is a weekend day.
+     * @param date Date instance
+     * @return True, if weekend day
+     */
+    public boolean isWeekend(Date date) {
+        Day day = getDayByDate(date);
+        return day == Day.SATURDAY || day == Day.SUNDAY;
     }
 }

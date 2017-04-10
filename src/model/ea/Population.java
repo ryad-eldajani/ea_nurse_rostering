@@ -24,15 +24,7 @@ public class Population {
     /**
      * Identifier for this instance.
      */
-    private long id = Population.getNextId();
-
-    /**
-     * Returns the last global identifier.
-     * @return Identifier
-     */
-    private static long getNextId() {
-        return lastId++;
-    }
+    private long id = lastId++;
 
     /**
      * Returns the identifier of this instance.

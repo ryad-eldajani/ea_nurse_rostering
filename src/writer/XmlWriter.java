@@ -46,11 +46,8 @@ public class XmlWriter implements IWriter {
                 Element employeeElement = new Element("Employee");
                 Element shiftTypeElement = new Element("ShiftType");
 
-                String date = ArrayHelper.getInstance().getString(
-                        ArrayHelper.getInstance().reverse(
-                                DateTimeHelper.getInstance().getDateString(dayRoster.getDate()).split("\\.")
-                        ),"-");
-                dateElement.appendChild(date);
+                dateElement.appendChild(
+                        DateTimeHelper.getInstance().getDateStringReversed(dayRoster.getDate(), "-"));
                 employeeElement.appendChild(String.valueOf(employee.getId()));
                 shiftTypeElement.appendChild(shiftType.getId());
 

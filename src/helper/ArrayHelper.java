@@ -40,12 +40,12 @@ public class ArrayHelper {
     }
 
     /**
-     * Reverses an array.
+     * Reverses an array. See: http://stackoverflow.com/a/2137791
      * @param array Array to reverses
      * @return Reversed array
      */
     public Object[] reverse(Object[] array) {
-        for(int i = 0; i < array.length / 2; i++) {
+        for (int i = 0; i < array.length / 2; i++) {
             Object temp = array[i];
             array[i] = array[array.length - i - 1];
             array[array.length - i - 1] = temp;

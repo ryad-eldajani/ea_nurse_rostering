@@ -1,6 +1,10 @@
 package helper;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 
 /**
  * Helper for file system methods.
@@ -27,11 +31,14 @@ public class FilesystemHelper {
 
     /**
      * Replaces place holders with concrete values.
+     * %d is replaced by date in YYYY_MM_DD format
+     * %t is replaced by time in HH_MM format
+     * %h is replaced by users home directory (Unix-like: ~, Windows: %USERPROFILE%)
      * @param filename File name
      * @return Replaced file path
      */
     private String parsePlaceholders(String filename) {
-        String date = DateTimeHelper.getInstance().getDateString("_");
+        String date = DateTimeHelper.getInstance().getDateStringReversed("_");
         String time = DateTimeHelper.getInstance().getTimeString("_");
         String homeDirectory = System.getProperty("user.home");
 
@@ -48,5 +55,33 @@ public class FilesystemHelper {
      */
     public String getFullPath(String filename) {
         return (new File(parsePlaceholders(filename))).getAbsolutePath();
+    }
+
+    /**
+     * Copies a file. See: http://stackoverflow.com/a/115086
+     * @param sourceFile Source file
+     * @param destFile Destination file
+     * @throws IOException Exception on IO error.
+     */
+    public void copyFile(String sourceFile, String destFile) throws IOException {
+        if (!(new File(destFile)).exists()) {
+            (new File(destFile)).createNewFile();
+        }
+
+        FileChannel source = null;
+        FileChannel destination = null;
+
+        try {
+            source = new FileInputStream(sourceFile).getChannel();
+            destination = new FileOutputStream(destFile).getChannel();
+            destination.transferFrom(source, 0, source.size());
+        } finally {
+            if (source != null) {
+                source.close();
+            }
+            if (destination != null) {
+                destination.close();
+            }
+        }
     }
 }

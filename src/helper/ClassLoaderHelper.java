@@ -19,7 +19,6 @@ public class ClassLoaderHelper {
 
     /**
      * Returns the singleton instance.
-     *
      * @return Singleton instance
      */
     public static ClassLoaderHelper getInstance() {

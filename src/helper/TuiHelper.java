@@ -7,6 +7,16 @@ import java.text.DecimalFormat;
  */
 public class TuiHelper {
     /**
+     * Start time in nano seconds.
+     */
+    private long startTime;
+
+    /**
+     * End time in nano seconds.
+     */
+    private long endTime;
+
+    /**
      * Singleton instance.
      */
     private final static TuiHelper instance = new TuiHelper();
@@ -55,6 +65,10 @@ public class TuiHelper {
      * @param max Maximum progress
      */
     public void showProgress(int progress, int max) {
+        if (progress == 0) {
+            startTime = System.nanoTime();
+        }
+
         float percentage = (float) progress / (float) max * 100f;
         System.out.print(String.format("\rCalculation progress: %s %s%% (%d/%d)",
                 showProgressBar(progress, max),
@@ -63,7 +77,10 @@ public class TuiHelper {
 
         // add line-feed, if 100%
         if (progress == max) {
-            System.out.print(System.getProperty("line.separator"));
+            endTime = System.nanoTime();
+            System.out.println(" - Calculation took " +
+                    (new DecimalFormat("0.00##")).format((endTime - startTime)/1000000000d)
+                    + " seconds");
         }
     }
 }

@@ -2,9 +2,13 @@ package model.ea;
 
 import model.schedule.DayRoster;
 import model.schedule.Employee;
+import model.schedule.ShiftType;
+import model.schedule.TimeUnit;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents an individual (a solution) for the evolutionary algorithm.
@@ -18,15 +22,7 @@ public class Individual {
     /**
      * Identifier for this instance.
      */
-    private long id = Individual.getNextId();
-
-    /**
-     * Returns the last global identifier.
-     * @return Identifier
-     */
-    private static long getNextId() {
-        return lastId++;
-    }
+    private long id = lastId++;
 
     /**
      * Returns the identifier of this instance.
@@ -39,7 +35,7 @@ public class Individual {
     /**
      * The fitness value of this individual.
      */
-    private Double fitness = null;
+    private Integer fitness = null;
 
     /**
      * List of all rosters for all days
@@ -100,7 +96,7 @@ public class Individual {
      */
     public void calculateFitness() {
         // TODO: Calculate correct fitness value
-        fitness = 0d;
+        fitness = 0;
     }
 
     /**
@@ -117,6 +113,49 @@ public class Individual {
         }
 
         return copyInstance;
+    }
+
+    /**
+     * Returns a list of TimeUnit instances for an employee.
+     * This correspondents to Definition 3 (event) of Burke et al. (2001)
+     * "Fitness Evaluation for Nurse Scheduling Problems".
+     * @param employee Employee to get time units
+     * @return List of TimeUnit instances
+     */
+    public List<TimeUnit> getTimeUnitsForEmployee(Employee employee) {
+        List<TimeUnit> timeUnits = new ArrayList<TimeUnit>();
+        for (DayRoster dayRoster: roster) {
+            for (Map.Entry<ShiftType, Employee> entry: dayRoster.getDayRoster().entrySet()) {
+                ShiftType shiftType = entry.getKey();
+                Employee currentEmployee = entry.getValue();
+                TimeUnit timeUnit = TimeUnit.getTimeUnit(dayRoster.getDate(), shiftType);
+
+                if (currentEmployee.getId() == employee.getId()) {
+                    timeUnits.add(timeUnit);
+                }
+            }
+        }
+
+        return timeUnits;
+    }
+
+    /**
+     * Adds a DayRoster instance to all rosters and takes care of updating
+     * TimeUnit instances.
+     * @param dayRoster DayRoster instance
+     */
+    public void addDayRoster(DayRoster dayRoster) {
+        roster.add(dayRoster);
+
+        // update time units
+        for (Map.Entry<ShiftType, Employee> entry: dayRoster.getDayRoster().entrySet()) {
+            ShiftType shiftType = entry.getKey();
+            Date date = dayRoster.getDate();
+            Employee employee = entry.getValue();
+
+            TimeUnit timeUnit = TimeUnit.getTimeUnit(date, shiftType);
+            timeUnit.addEmployee(employee);
+        }
     }
 
     @Override

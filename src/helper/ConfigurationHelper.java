@@ -1,6 +1,7 @@
 package helper;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Properties;
 
 /**
@@ -43,10 +44,17 @@ public class ConfigurationHelper {
      */
     private void loadConfiguration() throws Exception {
         if (configuration == null) {
-            configuration = new Properties();
-            FileInputStream in = new FileInputStream("config.properties");
-            configuration.load(in);
-            in.close();
+            try {
+                FileInputStream in = new FileInputStream("config.properties");
+                configuration = new Properties();
+                configuration.load(in);
+                in.close();
+            } catch (FileNotFoundException e) {
+                // No config.properties available, create copy from
+                // config.properties.default and reload.
+                FilesystemHelper.getInstance().copyFile("config.properties.default", "config.properties");
+                loadConfiguration();
+            }
         } else {
             throw new Exception("Properties instance already available.");
         }

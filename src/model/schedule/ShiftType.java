@@ -44,6 +44,46 @@ public class ShiftType {
                 "required skills: " + requiredSkills;
     }
 
+    /**
+     * Returns true, if this is an early shift type.
+     * @return True, if early shift type
+     */
+    public boolean isEarly() {
+        return id.equals("E");
+    }
+
+    /**
+     * Returns true, if this is a day shift type.
+     * @return True, if day shift type
+     */
+    public boolean isDay() {
+        return id.equals("D");
+    }
+
+    /**
+     * Returns true, if this is a late shift type.
+     * @return True, if late shift type
+     */
+    public boolean isLate() {
+        return id.equals("L");
+    }
+
+    /**
+     * Returns true, if this is a night shift type.
+     * @return True, if night shift type
+     */
+    public boolean isNight() {
+        return id.equals("N");
+    }
+
+    /**
+     * Returns true, if this is a day head nurse shift type.
+     * @return True, if day head nurse shift type
+     */
+    public boolean isDayHeadNurse() {
+        return id.equals("DH");
+    }
+
     /***
      * Following getters and setters are trivial and self explanatory, therefore not documented further.
      ***/

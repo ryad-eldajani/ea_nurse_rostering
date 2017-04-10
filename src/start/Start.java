@@ -5,6 +5,7 @@ import helper.ConfigurationHelper;
 import model.ea.EvolutionaryCycle;
 import model.ea.Individual;
 import model.ea.Population;
+import model.schedule.Numbering;
 import model.schedule.SchedulingPeriod;
 import parser.IParser;
 import writer.IWriter;
@@ -50,6 +51,11 @@ public class Start {
      * @return Full path of written file
      */
     private String writeSolutionFile(Individual individual) {
+        // check, if we need to write a solution file
+        if (!ConfigurationHelper.getInstance().getPropertyBoolean("SolutionWrite")) {
+            return "\"SolutionWrite\" in config.properties is set to \"false\", no solution file written.";
+        }
+
         IWriter writer = ClassLoaderHelper.getInstance().getWriter();
         try {
             return "Solution file written to: " + writer.writeFile(individual);
@@ -66,7 +72,12 @@ public class Start {
         IParser parser = ClassLoaderHelper.getInstance().getParser();
 
         // try to load the desired scheduling period
-        return parser.loadFile("data/"
+        SchedulingPeriod period = parser.loadFile("data/"
                 + ConfigurationHelper.getInstance().getProperty("PeriodFile", "toy1.xml"));
+
+        // setup the correct numberings for this scheduling period
+        Numbering.setupNumberings(period);
+
+        return period;
     }
 }

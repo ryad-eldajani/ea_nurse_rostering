@@ -114,4 +114,13 @@ public class DayRoster {
 
         return out.toString();
     }
+
+    /**
+     * Adds a roster information.
+     * @param shiftType ShiftType instance
+     * @param employee Employee instance
+     */
+    public void addToDayRoster(ShiftType shiftType, Employee employee) {
+        roster.put(shiftType, employee);
+    }
 }

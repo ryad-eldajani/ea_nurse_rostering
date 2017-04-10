@@ -31,13 +31,13 @@ public class SimpleConstructionHeuristic implements IConstructionHeuristic {
 
                     if (employee.hasRequiredSkillsForShiftType(shiftType)) {
                         // the employee has the required skills for this shift type, add to roster
-                        dayRoster.getDayRoster().put(shiftType, employee);
+                        dayRoster.addToDayRoster(shiftType, employee);
                         break;
                     }
                 }
             }
 
-            individual.getDayRosters().add(dayRoster);
+            individual.addDayRoster(dayRoster);
         }
 
         return individual;
