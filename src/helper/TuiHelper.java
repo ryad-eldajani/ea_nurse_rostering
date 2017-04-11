@@ -3,7 +3,7 @@ package helper;
 import java.text.DecimalFormat;
 
 /**
- * Helper methods for arrays.
+ * Helper methods for the terminal user interface.
  */
 public class TuiHelper {
     /**
