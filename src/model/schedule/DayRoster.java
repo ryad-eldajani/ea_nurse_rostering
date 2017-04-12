@@ -85,19 +85,17 @@ public class DayRoster {
      * @return True, if shift is assigned to appropriate nurse
      */
     public boolean isDemandedShiftAssignedToNurse() {
-        boolean feasible = true;
         for (Map.Entry<ShiftType, Employee> entry: roster.entrySet()) {
             ShiftType shiftType = entry.getKey();
             Employee employee = entry.getValue();
 
             // If the nurse doesn't have the required skill, the demand is unsatisfied.
             if (!employee.hasRequiredSkillsForShiftType(shiftType)) {
-                feasible = false;
-                break;
+                return false;
             }
         }
 
-        return feasible;
+        return true;
     }
 
     @Override
