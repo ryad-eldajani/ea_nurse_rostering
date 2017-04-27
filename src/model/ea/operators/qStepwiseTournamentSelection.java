@@ -5,6 +5,7 @@ package model.ea.operators;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import model.ea.Individual;
@@ -15,18 +16,19 @@ import model.schedule.SchedulingPeriod;
  * @author nicolasmaeke
  *
  */
-public class EnvironmentSelectionOperators {
+public class qStepwiseTournamentSelection implements IEnvironmentSelectionOperator{
 /**
  * 
- * @param numberOfDirectTournaments: the number of randomly chosen equaly distributed enemies per individual
+ * @param numberOfDirectTournaments: the number of randomly chosen equally distributed enemies per individual
  * @param currentPopulation: the population after mutation and recombination
  * @param numberOfSelections: how many individuals have to be selected for the next generation
  * @return
  */
-	public Population qStepwiseTournamentSelection(int numberOfDirectDuels, Population currentPopulation, int numberOfSelections, SchedulingPeriod sp) {
+	@Override
+	public void select (Population currentPopulation, Map<String, Object> optionalArguments) { // int numberOfDirectDuels, int numberOfSelections, SchedulingPeriod sp
 		
-		Population newPopulation = new Population(); // the new Population for the next generation
-		List<Individual> individuals = new ArrayList<Individual>(); // the selected individuals are written in this list
+		Population newPopulation = currentPopulation; // the new Population for the next generation
+		List<Individual> toRemove = new ArrayList<Individual>(); // the non-selected individuals are written in this list
 		int[] scores = new int[currentPopulation.getPool().size()]; // the number of wins per individual are written in this list
 		
 		for (int i = 0; i < currentPopulation.getPool().size(); i++ ){ // every individual of the population has to fight a tournament
@@ -45,29 +47,31 @@ public class EnvironmentSelectionOperators {
 			scores[i] = wins; // all wins of the individual are summed up to its score
 			}
 		
-		for (int j = 0; j < numberOfSelections; j++) { // the number of needed individuals for the next generation are taken from the current population
-			individuals.add(currentPopulation.getPool().get(getIndexOfMax(scores))); // the individual with the highest score are selected		
+		for (int j = 0; j < currentPopulation.getPool().size()-numberOfSelections; j++) { // the number of not needed individuals for the next generation are taken from the current population
+			toRemove.add(currentPopulation.getPool().get(getIndexOfMin(scores))); // the individual with the lowest score are selected		
 			}
 		}
-		newPopulation.addIndividualsToPool(individuals, sp); 
-		return newPopulation;
+		newPopulation.getPool().removeAll(toRemove);
+		return;
 	}
 	
 	
 	/**
-	 * helping method for finding the array index with the largest value 
+	 * helping method for finding the array index with the lowest value 
 	 * @param scores
 	 * @return
 	 */	
-	private int getIndexOfMax(int scores[]) {
-	    int max = scores[0];
+	private int getIndexOfMin(int scores[]) {
+	    int min = scores[0];
 	    int index = 0;
-	    for(int i=1; i < scores.length; i++) {
-	        if (max < scores[i]) {
+	    for(int i = 1; i < scores.length; i++) {
+	        if (min > scores[i]) {
 	            index = i;
-	            max = scores[i];
+	            min = scores[i];
 	        }
 	    }
 	    return index;
 	}
+
+
 }
