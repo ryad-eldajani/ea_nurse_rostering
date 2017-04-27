@@ -110,14 +110,15 @@ public class DayRoster {
     @Override
     public String toString() {
         List<String> out = new ArrayList<String>();
-        out.add(DateTimeHelper.getInstance().getDateString(date));
+        out.add(DateTimeHelper.getInstance().getDateString(date) + " "
+            + DateTimeHelper.getInstance().getDayByDate(date));
 
         for (Map<ShiftType, Employee> map: roster) {
             for (Map.Entry<ShiftType, Employee> entry: map.entrySet()) {
                 ShiftType shiftType = entry.getKey();
                 Employee employee = entry.getValue();
 
-                out.add("(Shift type: " + shiftType.getId() + ", Employee: " + employee.getName() + " "+employee.getSkills()+")");
+                out.add("(Shift type: " + shiftType.getId() + ", Employee: " + employee.getName() + " " + employee.getSkills() + ")");
             }
         }
 
