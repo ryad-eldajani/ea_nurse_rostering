@@ -9,6 +9,7 @@ import java.util.Random;
 
 import model.ea.Individual;
 import model.ea.Population;
+import model.schedule.SchedulingPeriod;
 
 /**
  * @author nicolasmaeke
@@ -22,7 +23,7 @@ public class EnvironmentSelectionOperators {
  * @param numberOfSelections: how many individuals have to be selected for the next generation
  * @return
  */
-	public Population qStepwiseTournamentSelection(int numberOfDirectDuels, Population currentPopulation, int numberOfSelections) {
+	public Population qStepwiseTournamentSelection(int numberOfDirectDuels, Population currentPopulation, int numberOfSelections, SchedulingPeriod sp) {
 		
 		Population newPopulation = new Population(); // the new Population for the next generation
 		List<Individual> individuals = new ArrayList<Individual>(); // the selected individuals are written in this list
@@ -48,7 +49,7 @@ public class EnvironmentSelectionOperators {
 			individuals.add(currentPopulation.getPool().get(getIndexOfMax(scores))); // the individual with the highest score are selected		
 			}
 		}
-		newPopulation.addIndividualsToPool(individuals); 
+		newPopulation.addIndividualsToPool(individuals, sp); 
 		return newPopulation;
 	}
 	
