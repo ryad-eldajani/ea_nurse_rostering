@@ -1,5 +1,7 @@
 package model.ea;
 
+import model.schedule.SchedulingPeriod;
+
 import java.util.*;
 
 /**
@@ -77,10 +79,11 @@ public class Population {
     /**
      * Adds an Individual instance to the pool list.
      * @param individual Individual instance
-     * @throws IndividualNotFeasibleException
+     * @param period SchedulingPeriod instance
+     * @throws IndividualNotFeasibleException Exception if individual is not feasible
      */
-    public void addIndividualToPool(Individual individual) throws IndividualNotFeasibleException {
-        if (!individual.isFeasible()) {
+    public void addIndividualToPool(Individual individual, SchedulingPeriod period) throws IndividualNotFeasibleException {
+        if (!individual.isFeasible(period)) {
             throw new IndividualNotFeasibleException();
         }
         pool.add(individual);
@@ -89,11 +92,12 @@ public class Population {
     /**
      * Adds a list of Individual instance to the pool list.
      * @param individuals List of Individual instances
+     * @param period SchedulingPeriod instance
      */
-    public void addIndividualsToPool(List<Individual> individuals) {
+    public void addIndividualsToPool(List<Individual> individuals, SchedulingPeriod period) {
         for (Individual individual: individuals) {
             try {
-                addIndividualToPool(individual);
+                addIndividualToPool(individual, period);
             } catch (IndividualNotFeasibleException e) {
                 System.out.println("Individual not feasible.");
             }

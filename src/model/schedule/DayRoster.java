@@ -11,7 +11,7 @@ public class DayRoster {
     /**
      * Roster information containing an employee for each shift type.
      */
-    private Map<ShiftType, Employee> roster = new HashMap<ShiftType, Employee>();
+    private List<Map<ShiftType, Employee>> roster = new ArrayList<Map<ShiftType, Employee>>();
 
     /**
      * The date of this roster.
@@ -27,13 +27,18 @@ public class DayRoster {
         copyInstance.setDate(DateTimeHelper.getInstance().getDateCopy(dayRoster.date));
 
         // deep copy roster information
-        Map<ShiftType, Employee> copyRoster = new HashMap<ShiftType, Employee>();
-        for (Map.Entry<ShiftType, Employee> entry: dayRoster.roster.entrySet()) {
-            // We can use the given references for shift types and employees
-            // here, thus we don't need to deep copy them.
-            ShiftType shiftType = entry.getKey();
-            Employee employee = entry.getValue();
-            copyRoster.put(shiftType, employee);
+        List<Map<ShiftType, Employee>> copyRoster = new ArrayList<Map<ShiftType, Employee>>();
+
+        for (Map<ShiftType, Employee> map: dayRoster.roster) {
+            for (Map.Entry<ShiftType, Employee> entry: map.entrySet()) {
+                // We can use the given references for shift types and employees
+                // here, thus we don't need to deep copy them.
+                ShiftType shiftType = entry.getKey();
+                Employee employee = entry.getValue();
+                Map<ShiftType, Employee> copyMap = new HashMap<ShiftType, Employee>();
+                copyMap.put(shiftType, employee);
+                copyRoster.add(copyMap);
+            }
         }
         copyInstance.roster = copyRoster;
 
@@ -62,9 +67,11 @@ public class DayRoster {
      * @return True, if employee is already planned
      */
     public boolean isEmployeePlanned(Employee employee) {
-        for (Employee employee1: roster.values()) {
-            if (employee1.equals(employee)) {
-                return true;
+        for (Map<ShiftType, Employee> map: roster) {
+            for (Employee employee1: map.values()) {
+                if (employee1.equals(employee)) {
+                    return true;
+                }
             }
         }
 
@@ -75,7 +82,7 @@ public class DayRoster {
      * Returns the roster information for this day.
      * @return Roster information
      */
-    public Map<ShiftType, Employee> getDayRoster() {
+    public List<Map<ShiftType, Employee>> getDayRoster() {
         return roster;
     }
 
@@ -85,13 +92,15 @@ public class DayRoster {
      * @return True, if shift is assigned to appropriate nurse
      */
     public boolean isDemandedShiftAssignedToNurse() {
-        for (Map.Entry<ShiftType, Employee> entry: roster.entrySet()) {
-            ShiftType shiftType = entry.getKey();
-            Employee employee = entry.getValue();
+        for (Map<ShiftType, Employee> map: roster) {
+            for (Map.Entry<ShiftType, Employee> entry: map.entrySet()) {
+                ShiftType shiftType = entry.getKey();
+                Employee employee = entry.getValue();
 
-            // If the nurse doesn't have the required skill, the demand is unsatisfied.
-            if (!employee.hasRequiredSkillsForShiftType(shiftType)) {
-                return false;
+                // If the nurse doesn't have the required skill, the demand is unsatisfied.
+                if (!employee.hasRequiredSkillsForShiftType(shiftType)) {
+                    return false;
+                }
             }
         }
 
@@ -103,11 +112,13 @@ public class DayRoster {
         List<String> out = new ArrayList<String>();
         out.add(DateTimeHelper.getInstance().getDateString(date));
 
-        for (Map.Entry<ShiftType, Employee> entry: roster.entrySet()) {
-            ShiftType shiftType = entry.getKey();
-            Employee employee = entry.getValue();
+        for (Map<ShiftType, Employee> map: roster) {
+            for (Map.Entry<ShiftType, Employee> entry: map.entrySet()) {
+                ShiftType shiftType = entry.getKey();
+                Employee employee = entry.getValue();
 
-            out.add("(Shift type: " + shiftType.getId() + ", Employee: " + employee.getName() + ")");
+                out.add("(Shift type: " + shiftType.getId() + ", Employee: " + employee.getName() + ")");
+            }
         }
 
         return out.toString();
@@ -119,6 +130,8 @@ public class DayRoster {
      * @param employee Employee instance
      */
     public void addToDayRoster(ShiftType shiftType, Employee employee) {
-        roster.put(shiftType, employee);
+        Map<ShiftType, Employee> map = new HashMap<ShiftType, Employee>();
+        map.put(shiftType, employee);
+        roster.add(map);
     }
 }

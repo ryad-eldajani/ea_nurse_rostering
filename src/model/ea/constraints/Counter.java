@@ -99,6 +99,7 @@ public class Counter {
                 counter.timeUnit[timeUnit] = timeUnit;
 
                 // if employee has this shift, set appropriate variables
+                /*
                 if (rosters.get(i).getDayRoster().get(shiftTypes.get(j)).equals(employee)) {
                     counter.event[timeUnit] = true;
                     last = timeUnit;
@@ -108,6 +109,7 @@ public class Counter {
                     counter.event[timeUnit] = false;
                     consecutive = 0;
                 }
+                */
 
                 counter.last[timeUnit] = last;
                 counter.total[timeUnit] = total;

@@ -1,14 +1,8 @@
 package model.ea;
 
-import model.schedule.DayRoster;
-import model.schedule.Employee;
-import model.schedule.ShiftType;
-import model.schedule.TimeUnit;
+import model.schedule.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class represents an individual (a solution) for the evolutionary algorithm.
@@ -53,19 +47,46 @@ public class Individual {
     /**
      * Returns true, if this individual is a feasible solution, i.e. all
      * hard constraints are satisfied.
+     * @param period SchedulingPeriod instance
      * @return True, if this individual is a feasible solution
      */
-    public boolean isFeasible() {
+    public boolean isFeasible(SchedulingPeriod period) {
         // check, if hard  constraints for each planned day are satisfied
         for (DayRoster dayRoster: roster) {
-            List<Employee> plannedEmployees = new ArrayList<Employee>();
-            for (Employee employee: dayRoster.getDayRoster().values()) {
-                // if the employee already has a shift this day, this solution is not feasible
-                if (plannedEmployees.contains(employee)) {
+            Map<ShiftType, List<Employee>> plannedEmployees = new HashMap<ShiftType, List<Employee>>();
+            Map<ShiftType, Integer> preferredCounts = new HashMap<ShiftType, Integer>();
+
+            ShiftType shiftType = null;
+            for (Map<ShiftType, Employee> map: dayRoster.getDayRoster()) {
+                for (Map.Entry<ShiftType, Employee> roster : map.entrySet()) {
+                    shiftType = roster.getKey();
+                    Employee employee = roster.getValue();
+
+                    if (plannedEmployees.containsKey(shiftType)) {
+                        // only add, if not in list already
+                        if (!plannedEmployees.get(shiftType).contains(employee)) {
+                            plannedEmployees.get(shiftType).add(employee);
+                        }
+                    } else {
+                        List<Employee> employees = new ArrayList<Employee>();
+                        employees.add(employee);
+                        plannedEmployees.put(shiftType, employees);
+                    }
+
+                    if (!preferredCounts.containsKey(shiftType)) {
+                        preferredCounts.put(shiftType, period.getPreferredEmployeeCount(shiftType));
+                    }
+                }
+            }
+
+            // check, if size of each planned employees
+            for (Map.Entry<ShiftType, List<Employee>> planned: plannedEmployees.entrySet()) {
+                ShiftType shiftType1 = planned.getKey();
+                List<Employee> employees = planned.getValue();
+
+                if (!preferredCounts.containsKey(shiftType1) || !(employees.size() == preferredCounts.get(shiftType1))) {
                     return false;
                 }
-
-                plannedEmployees.add(employee);
             }
 
             // check if demand for the day is satisfied
@@ -125,13 +146,15 @@ public class Individual {
     public List<TimeUnit> getTimeUnitsForEmployee(Employee employee) {
         List<TimeUnit> timeUnits = new ArrayList<TimeUnit>();
         for (DayRoster dayRoster: roster) {
-            for (Map.Entry<ShiftType, Employee> entry: dayRoster.getDayRoster().entrySet()) {
-                ShiftType shiftType = entry.getKey();
-                Employee currentEmployee = entry.getValue();
-                TimeUnit timeUnit = TimeUnit.getTimeUnit(dayRoster.getDate(), shiftType);
+            for (Map<ShiftType, Employee> map: dayRoster.getDayRoster()) {
+                for (Map.Entry<ShiftType, Employee> entry: map.entrySet()) {
+                    ShiftType shiftType = entry.getKey();
+                    Employee currentEmployee = entry.getValue();
+                    TimeUnit timeUnit = TimeUnit.getTimeUnit(dayRoster.getDate(), shiftType);
 
-                if (currentEmployee.getId() == employee.getId()) {
-                    timeUnits.add(timeUnit);
+                    if (currentEmployee.getId() == employee.getId()) {
+                        timeUnits.add(timeUnit);
+                    }
                 }
             }
         }
@@ -148,13 +171,15 @@ public class Individual {
         roster.add(dayRoster);
 
         // update time units
-        for (Map.Entry<ShiftType, Employee> entry: dayRoster.getDayRoster().entrySet()) {
-            ShiftType shiftType = entry.getKey();
-            Date date = dayRoster.getDate();
-            Employee employee = entry.getValue();
+        for (Map<ShiftType, Employee> map: dayRoster.getDayRoster()) {
+            for (Map.Entry<ShiftType, Employee> entry: map.entrySet()) {
+                ShiftType shiftType = entry.getKey();
+                Date date = dayRoster.getDate();
+                Employee employee = entry.getValue();
 
-            TimeUnit timeUnit = TimeUnit.getTimeUnit(date, shiftType);
-            timeUnit.addEmployee(employee);
+                TimeUnit timeUnit = TimeUnit.getTimeUnit(date, shiftType);
+                timeUnit.addEmployee(employee);
+            }
         }
     }
 
@@ -163,7 +188,7 @@ public class Individual {
         String nl = System.getProperty("line.separator");
         StringBuilder out = new StringBuilder();
 
-        out.append("Individual ID: ").append(id).append(", fitness: ").append(fitness).append(", feasible: ").append(isFeasible()).append(nl);
+        out.append("Individual ID: ").append(id).append(", fitness: ").append(fitness).append(nl);
 
         for (DayRoster dayRoster: roster) {
             out.append(dayRoster).append(nl);

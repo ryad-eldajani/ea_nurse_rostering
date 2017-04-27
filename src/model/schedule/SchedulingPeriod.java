@@ -283,4 +283,20 @@ public class SchedulingPeriod {
 
         return out.toString();
     }
+
+    /**
+     * Returns the preferred number of employees requested for a shift type.
+     * @param shiftType ShiftType instance
+     * @return Count of preferred employees per shift type
+     */
+    public Integer getPreferredEmployeeCount(ShiftType shiftType) {
+        for (Cover cover: dayCovers) {
+            Integer count = cover.getPreferredEmployeeCount(shiftType);
+            if (count != null) {
+                return count;
+            }
+        }
+
+        return null;
+    }
 }
