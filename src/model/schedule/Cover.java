@@ -1,5 +1,8 @@
 package model.schedule;
 
+import helper.DateTimeHelper;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,11 +69,12 @@ public class Cover {
     /**
      * Returns the preferred number of employees requested for a shift type.
      * @param shiftType ShiftType instance
+     * @param date Date instance
      * @return Count of preferred employees per shift type
      */
-    public Integer getPreferredEmployeeCount(ShiftType shiftType) {
+    public Integer getPreferredEmployeeCount(ShiftType shiftType, Date date) {
         for (Map.Entry<ShiftType, Integer> cover: covers.entrySet()) {
-            if (shiftType.equals(cover.getKey())) {
+            if (shiftType.equals(cover.getKey()) && DateTimeHelper.getInstance().getDayByDate(date).equals(day)) {
                 return cover.getValue();
             }
         }

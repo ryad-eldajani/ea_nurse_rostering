@@ -83,7 +83,7 @@ public class Population {
      * @throws IndividualNotFeasibleException Exception if individual is not feasible
      */
     public void addIndividualToPool(Individual individual, SchedulingPeriod period) throws IndividualNotFeasibleException {
-        if (!individual.isFeasible(period)) {
+        if (!individual.isFeasible()) {
             throw new IndividualNotFeasibleException();
         }
         pool.add(individual);

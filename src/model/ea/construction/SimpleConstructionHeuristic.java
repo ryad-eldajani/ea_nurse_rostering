@@ -16,24 +16,29 @@ public class SimpleConstructionHeuristic implements IConstructionHeuristic {
     @Override
     public Individual getIndividual(SchedulingPeriod period) {
         Individual individual = new Individual();
+        individual.setSchedulingPeriod(period);
+        int numberOfEmployees = period.getEmployees().size();
 
         // iterate over every day
         for (int dayNumber = 0; dayNumber < DateTimeHelper.getInstance().getNumberOfDays(period); dayNumber++) {
             Date currentDate = DateTimeHelper.getInstance().getDateByNumber(period, dayNumber);
             DayRoster dayRoster = new DayRoster();
             dayRoster.setDate(currentDate);
-            for (ShiftType shiftType: period.getCoversByDate(currentDate).keySet()) {
-                for (Employee employee: period.getEmployees()) {
-                    // only assign, if not planned already
-                    if (dayRoster.isEmployeePlanned(employee)) {
-                        continue;
-                    }
+            int employeeId = 0;
 
-                    if (employee.hasRequiredSkillsForShiftType(shiftType)) {
-                        // the employee has the required skills for this shift type, add to roster
-                        dayRoster.addToDayRoster(shiftType, employee);
-                        break;
-                    }
+            for (Map.Entry<ShiftType, Integer> cover : period.getCoversByDate(currentDate).entrySet()) {
+                // try to find employees which have required skills and are unique per day
+                ShiftType shiftType = cover.getKey();
+                Integer preferredEmployeeCount = cover.getValue();
+                for (int employeeNumber = 0; employeeNumber < preferredEmployeeCount; employeeNumber++) {
+                    Employee employee;
+                    do {
+                        employee = period.getEmployeeById(employeeId++);
+                    } while (!employee.hasRequiredSkillsForShiftType(shiftType)
+                            || dayRoster.isEmployeePlanned(employee));
+
+                    // the random chosen employee fits the criteria, add to day roster
+                    dayRoster.addToDayRoster(shiftType, employee);
                 }
             }
 
