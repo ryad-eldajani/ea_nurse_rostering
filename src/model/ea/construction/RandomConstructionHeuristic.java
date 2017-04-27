@@ -17,6 +17,7 @@ public class RandomConstructionHeuristic implements IConstructionHeuristic {
     @Override
     public Individual getIndividual(SchedulingPeriod period) {
         Individual individual = new Individual();
+        individual.setSchedulingPeriod(period);
         int numberOfEmployees = period.getEmployees().size();
 
         // iterate over every day

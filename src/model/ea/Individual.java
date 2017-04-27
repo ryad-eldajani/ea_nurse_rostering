@@ -37,6 +37,11 @@ public class Individual {
     private List<DayRoster> roster = new ArrayList<DayRoster>();
 
     /**
+     * The scheduling period for this individual.
+     */
+    private SchedulingPeriod period = null;
+
+    /**
      * Returns the List of DayRoster instances.
      * @return List of DayRoster instances
      */
@@ -47,10 +52,9 @@ public class Individual {
     /**
      * Returns true, if this individual is a feasible solution, i.e. all
      * hard constraints are satisfied.
-     * @param period SchedulingPeriod instance
      * @return True, if this individual is a feasible solution
      */
-    public boolean isFeasible(SchedulingPeriod period) {
+    public boolean isFeasible() {
         // check, if hard  constraints for each planned day are satisfied
         for (DayRoster dayRoster: roster) {
             Map<ShiftType, List<Employee>> plannedEmployees = new HashMap<ShiftType, List<Employee>>();
@@ -74,7 +78,7 @@ public class Individual {
                     }
 
                     if (!preferredCounts.containsKey(shiftType)) {
-                        preferredCounts.put(shiftType, period.getPreferredEmployeeCount(shiftType));
+                        preferredCounts.put(shiftType, period.getPreferredEmployeeCount(shiftType, dayRoster.getDate()));
                     }
                 }
             }
@@ -113,6 +117,14 @@ public class Individual {
     }
 
     /**
+     * Setter for SchedulingPeriod instance.
+     * @param period SchedulingPeriod instance
+     */
+    public void setSchedulingPeriod(SchedulingPeriod period) {
+        this.period = period;
+    }
+
+    /**
      * Calculates the fitness value for this individual. The lower the value, the better.
      */
     public void calculateFitness() {
@@ -127,6 +139,7 @@ public class Individual {
     public static Individual copy(Individual individual) {
         Individual copyInstance = new Individual();
         copyInstance.fitness = individual.fitness;
+        copyInstance.period = individual.period;
 
         // deep copy day roster
         for (DayRoster dayRoster: individual.roster) {
@@ -188,7 +201,7 @@ public class Individual {
         String nl = System.getProperty("line.separator");
         StringBuilder out = new StringBuilder();
 
-        out.append("Individual ID: ").append(id).append(", fitness: ").append(fitness).append(nl);
+        out.append("Individual ID: ").append(id).append(", fitness: ").append(fitness).append(", feasible: ").append(isFeasible()).append(nl);
 
         for (DayRoster dayRoster: roster) {
             out.append(dayRoster).append(nl);

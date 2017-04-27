@@ -3,6 +3,8 @@ package model.ea.operators;
 import helper.ConfigurationHelper;
 import model.ea.Population;
 
+import java.util.Map;
+
 /**
  * Implements a simple environmental selection operator.
  */
@@ -14,10 +16,11 @@ public class SimpleEnvironmentSelectionOperator implements IEnvironmentSelection
 
     /**
      * Selects the fittest individuals from a population.
-     * @param population Population instance
+     * @param population Old generation Population instance
+     * @param optionalArguments optional Arguments
      */
     @Override
-    public void select(Population population) {
+    public void select(Population population, Map<String, Object> optionalArguments) {
         // If there are less or equal individuals in this population than
         // configured, just abort.
         if (population.getPool().size() <= individualsPerPopulation) {

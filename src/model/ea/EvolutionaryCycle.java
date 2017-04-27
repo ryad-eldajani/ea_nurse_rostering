@@ -92,7 +92,7 @@ public class EvolutionaryCycle {
             newPopulation.benchmark();
 
             // get environmental selection from new generation
-            environmentSelectionOperator.select(newPopulation);
+            environmentSelectionOperator.select(newPopulation, null);
         }
 
         // cycle is terminated, return the latest solution
