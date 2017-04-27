@@ -1,5 +1,7 @@
 package model.ea;
 
+import helper.ClassLoaderHelper;
+import model.ea.constraints.IFitnessCalculator;
 import model.schedule.*;
 
 import java.util.*;
@@ -29,7 +31,7 @@ public class Individual {
     /**
      * The fitness value of this individual.
      */
-    private Integer fitness = null;
+    private Float fitness = null;
 
     /**
      * List of all rosters for all days
@@ -40,6 +42,16 @@ public class Individual {
      * The scheduling period for this individual.
      */
     private SchedulingPeriod period = null;
+
+    /**
+     * The fitness calculator instance
+     */
+    private IFitnessCalculator fitnessCalculator = ClassLoaderHelper.getInstance().getFitnessCalculator();
+
+    /**
+     * Cache for number of assignments per employee.
+     */
+    private Map<Employee, Integer> numAssignments = new HashMap<Employee, Integer>();
 
     /**
      * Returns the List of DayRoster instances.
@@ -60,10 +72,9 @@ public class Individual {
             Map<ShiftType, List<Employee>> plannedEmployees = new HashMap<ShiftType, List<Employee>>();
             Map<ShiftType, Integer> preferredCounts = new HashMap<ShiftType, Integer>();
 
-            ShiftType shiftType = null;
             for (Map<ShiftType, Employee> map: dayRoster.getDayRoster()) {
                 for (Map.Entry<ShiftType, Employee> roster : map.entrySet()) {
-                    shiftType = roster.getKey();
+                    ShiftType shiftType = shiftType = roster.getKey();
                     Employee employee = roster.getValue();
 
                     if (plannedEmployees.containsKey(shiftType)) {
@@ -107,10 +118,10 @@ public class Individual {
      * Returns the fitness value for this individual. The lower the value, the better.
      * @return Fitness value
      */
-    public double getFitness() {
+    public float getFitness() {
         // if fitness value is not calculated, calculate now
         if (fitness == null) {
-            calculateFitness();
+            fitness = fitnessCalculator.calculate(this, period);
         }
 
         return fitness;
@@ -122,14 +133,6 @@ public class Individual {
      */
     public void setSchedulingPeriod(SchedulingPeriod period) {
         this.period = period;
-    }
-
-    /**
-     * Calculates the fitness value for this individual. The lower the value, the better.
-     */
-    public void calculateFitness() {
-        // TODO: Calculate correct fitness value
-        fitness = 0;
     }
 
     /**
@@ -194,6 +197,29 @@ public class Individual {
                 timeUnit.addEmployee(employee);
             }
         }
+    }
+
+    /**
+     * Returns the number of assignments per employee
+     * @param employee Employee instance
+     * @return Number of assignments
+     */
+    public int getNumAssignments(Employee employee) {
+        // check, if number of assignments is already calculated
+        if (numAssignments.containsKey(employee)) {
+            return numAssignments.get(employee);
+        }
+
+        // calculate number of assignments and store in cache
+        int assignments = 0;
+        for (DayRoster dayRoster: roster) {
+            if (dayRoster.isEmployeePlanned(employee)) {
+                assignments++;
+            }
+        }
+        numAssignments.put(employee, assignments);
+
+        return assignments;
     }
 
     @Override

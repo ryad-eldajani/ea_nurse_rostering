@@ -85,4 +85,28 @@ public class Attribute {
     public String getName() {
         return name;
     }
+
+    /**
+     * Returns the value as integer.
+     * @return Value as integer
+     */
+    public int getValueInt() {
+        try {
+            return (Integer) value;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Returns the value as boolean.
+     * @return Value as boolean
+     */
+    public boolean getValueBoolean() {
+        try {
+            return (Boolean) value;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

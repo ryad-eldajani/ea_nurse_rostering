@@ -1,5 +1,6 @@
 package helper;
 
+import model.ea.constraints.IFitnessCalculator;
 import model.ea.operators.IEnvironmentSelectionOperator;
 import model.ea.operators.IMutationOperator;
 import model.ea.operators.IRecombinationOperator;
@@ -139,5 +140,18 @@ public class ClassLoaderHelper {
         }
 
         return (IEnvironmentSelectionOperator) instance;
+    }
+
+    /**
+     * Returns the implementing fitness calculator.
+     * @return Instance that implements IFitnessCalculator
+     */
+    public IFitnessCalculator getFitnessCalculator() {
+        Object instance = getLoadedClass("FitnessCalculator", "DefaultFitnessCalculator", "model.ea.constraints.");
+        if (instance == null) {
+            return null;
+        }
+
+        return (IFitnessCalculator) instance;
     }
 }
