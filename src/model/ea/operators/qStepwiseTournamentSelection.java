@@ -8,20 +8,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import helper.ConfigurationHelper;
 import model.ea.Individual;
 import model.ea.Population;
-import model.schedule.SchedulingPeriod;
 
 /**
  * @author nicolasmaeke
  *
  */
 public class qStepwiseTournamentSelection implements IEnvironmentSelectionOperator{
+	private int numberOfDirectDuels = ConfigurationHelper.getInstance().getPropertyInteger("NumberOfDirectDuels", 3);
+	private int numberOfSelections = ConfigurationHelper.getInstance().getPropertyInteger("IndividualsPerPopulation", 10);
 /**
- * 
- * @param numberOfDirectTournaments: the number of randomly chosen equally distributed enemies per individual
  * @param currentPopulation: the population after mutation and recombination
- * @param numberOfSelections: how many individuals have to be selected for the next generation
  * @return
  */
 	@Override

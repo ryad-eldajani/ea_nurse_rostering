@@ -14,6 +14,7 @@ RandomSeed=
 ## Parameters for the evolutionary algorithm ##
 MaxIterations=1000
 IndividualsPerPopulation=10
+NumberOfDirectDuels=3
 UseRecombination=true
 UseMutation=true
 ConstructionHeuristic=SimpleConstructionHeuristic
