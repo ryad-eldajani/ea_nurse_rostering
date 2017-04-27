@@ -117,7 +117,7 @@ public class DayRoster {
                 ShiftType shiftType = entry.getKey();
                 Employee employee = entry.getValue();
 
-                out.add("(Shift type: " + shiftType.getId() + ", Employee: " + employee.getName() + ")");
+                out.add("(Shift type: " + shiftType.getId() + ", Employee: " + employee.getName() + " "+employee.getSkills()+")");
             }
         }
 
