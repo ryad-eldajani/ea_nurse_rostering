@@ -55,11 +55,26 @@ public class Cover {
         String nl = System.getProperty("line.separator");
         StringBuilder coverInfo = new StringBuilder();
 
-        for (Map.Entry<ShiftType, Integer> cover : covers.entrySet()) {
+        for (Map.Entry<ShiftType, Integer> cover: covers.entrySet()) {
             coverInfo.append(" -- ").append(cover.getKey().getDescription()).append(": ").append(cover.getValue()).append(nl);
         }
 
         return "Day: " + day.toString() + nl + " - Cover information: " + nl + coverInfo;
 
+    }
+
+    /**
+     * Returns the preferred number of employees requested for a shift type.
+     * @param shiftType ShiftType instance
+     * @return Count of preferred employees per shift type
+     */
+    public Integer getPreferredEmployeeCount(ShiftType shiftType) {
+        for (Map.Entry<ShiftType, Integer> cover: covers.entrySet()) {
+            if (shiftType.equals(cover.getKey())) {
+                return cover.getValue();
+            }
+        }
+
+        return null;
     }
 }

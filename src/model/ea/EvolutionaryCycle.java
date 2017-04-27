@@ -86,7 +86,7 @@ public class EvolutionaryCycle {
             // Replace new population by old population and add
             // new individuals to the new generation.
             newPopulation = oldPopulation;
-            newPopulation.addIndividualsToPool(newIndividuals);
+            newPopulation.addIndividualsToPool(newIndividuals, period);
 
             // benchmark new generation
             newPopulation.benchmark();
@@ -119,7 +119,7 @@ public class EvolutionaryCycle {
         for (int i = 0; i < ConfigurationHelper.getInstance().getPropertyInteger("IndividualsPerPopulation", 10); i++) {
             Individual individual = ClassLoaderHelper.getInstance().getConstructionHeuristic().getIndividual(period);
             try {
-                population.addIndividualToPool(individual);
+                population.addIndividualToPool(individual, period);
             } catch (IndividualNotFeasibleException e) {
                 e.printStackTrace();
             }

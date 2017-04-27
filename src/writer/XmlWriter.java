@@ -37,25 +37,27 @@ public class XmlWriter implements IWriter {
         root.appendChild(penalty);
 
         for (DayRoster dayRoster: individual.getDayRosters()) {
-            for (Map.Entry<ShiftType, Employee> entry: dayRoster.getDayRoster().entrySet()) {
-                ShiftType shiftType = entry.getKey();
-                Employee employee = entry.getValue();
+            for (Map<ShiftType, Employee> map: dayRoster.getDayRoster()) {
+                for (Map.Entry<ShiftType, Employee> entry: map.entrySet()) {
+                    ShiftType shiftType = entry.getKey();
+                    Employee employee = entry.getValue();
 
-                Element assignment = new Element("Assignment");
-                Element dateElement = new Element("Date");
-                Element employeeElement = new Element("Employee");
-                Element shiftTypeElement = new Element("ShiftType");
+                    Element assignment = new Element("Assignment");
+                    Element dateElement = new Element("Date");
+                    Element employeeElement = new Element("Employee");
+                    Element shiftTypeElement = new Element("ShiftType");
 
-                dateElement.appendChild(
-                        DateTimeHelper.getInstance().getDateStringReversed(dayRoster.getDate(), "-"));
-                employeeElement.appendChild(String.valueOf(employee.getId()));
-                shiftTypeElement.appendChild(shiftType.getId());
+                    dateElement.appendChild(
+                            DateTimeHelper.getInstance().getDateStringReversed(dayRoster.getDate(), "-"));
+                    employeeElement.appendChild(String.valueOf(employee.getId()));
+                    shiftTypeElement.appendChild(shiftType.getId());
 
-                assignment.appendChild(dateElement);
-                assignment.appendChild(employeeElement);
-                assignment.appendChild(shiftTypeElement);
+                    assignment.appendChild(dateElement);
+                    assignment.appendChild(employeeElement);
+                    assignment.appendChild(shiftTypeElement);
 
-                root.appendChild(assignment);
+                    root.appendChild(assignment);
+                }
             }
         }
 
