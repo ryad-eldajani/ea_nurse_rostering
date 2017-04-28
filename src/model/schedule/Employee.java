@@ -66,7 +66,7 @@ public class Employee {
     }
 
     public String getName() {
-        return name;
+        return String.format("%2s", name);
     }
 
     public void setName(String name) {

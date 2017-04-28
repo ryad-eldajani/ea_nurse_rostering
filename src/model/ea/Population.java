@@ -129,4 +129,12 @@ public class Population {
         });
         return this;
     }
+
+    /**
+     * Returns the individual with the best fitness from this population.
+     * @return Best individual
+     */
+    public Individual getBestIndividual() {
+        return this.sortByFitness().pool.get(0);
+    }
 }

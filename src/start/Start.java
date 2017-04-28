@@ -2,6 +2,7 @@ package start;
 
 import helper.ClassLoaderHelper;
 import helper.ConfigurationHelper;
+import helper.TuiHelper;
 import model.ea.EvolutionaryCycle;
 import model.ea.Individual;
 import model.ea.Population;
@@ -37,12 +38,19 @@ public class Start {
      * @param args Optional arguments for the JVM
      */
     public static void main(String[] args) {
+        // read scheduling period information
         SchedulingPeriod period = getInstance().parseSchedulingPeriod();
-        Population population = (new EvolutionaryCycle()).evolutionize(period);
-        Individual best = population.sortByFitness().getPool().get(0);
 
-        System.out.println("Best solution: " + best);
-        System.out.println(getInstance().writeSolutionFile(best));
+        // create and run the evolutionary cycle
+        EvolutionaryCycle evolutionaryCycle = (new EvolutionaryCycle());
+        Population evolutionizedPopulation = evolutionaryCycle.evolutionize(period);
+
+        // retrieve best individual from initialized and evolutionized populations
+        Individual bestInitialized = evolutionaryCycle.getInitPopulation().getBestIndividual();
+        Individual best = evolutionizedPopulation.getBestIndividual();
+
+        TuiHelper.getInstance().showEAResult(best, bestInitialized);
+        System.out.println(Start.getInstance().writeSolutionFile(best));
     }
 
     /**

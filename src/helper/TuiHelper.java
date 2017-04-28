@@ -1,11 +1,18 @@
 package helper;
 
+import model.ea.Individual;
+
 import java.text.DecimalFormat;
 
 /**
  * Helper methods for the terminal user interface.
  */
 public class TuiHelper {
+    /**
+     * Bytes to Megabytes conversion.
+     */
+    public static final int MB = 1024 * 1024;
+
     /**
      * Start time in nano seconds.
      */
@@ -82,5 +89,31 @@ public class TuiHelper {
                     (new DecimalFormat("0.00##")).format((endTime - startTime)/1000000000d)
                     + " seconds");
         }
+    }
+
+    /**
+     * Outputs memory usage.
+     * See: http://viralpatel.net/blogs/getting-jvm-heap-size-used-memory-total-memory-using-java-runtime/
+     */
+    private void showMemoryUsage() {
+        Runtime runtime = Runtime.getRuntime();
+        System.out.println("Used memory: "
+                + (runtime.totalMemory() - runtime.freeMemory()) / MB + "/"
+                + runtime.totalMemory() / MB + " MB (max memory: "
+                + runtime.maxMemory() / MB + " MB)");
+    }
+
+    /**
+     * Shows results of the evolutionary algorithms.
+     * @param best Best overall individual
+     * @param bestInitialized Best individual from the initialized population
+     */
+    public void showEAResult(Individual best, Individual bestInitialized) {
+        showMemoryUsage();
+        System.out.println("Best initialized individual: " + bestInitialized.getId()
+                + ", fitness: " + bestInitialized.getFitness());
+        System.out.println("Best evolutionized individual: " + best.getId()
+                + ", fitness: " + best.getFitness());
+        System.out.println("Best solution: " + best);
     }
 }

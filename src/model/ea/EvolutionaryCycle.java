@@ -56,12 +56,25 @@ public class EvolutionaryCycle {
     private IEnvironmentSelectionOperator environmentSelectionOperator = ClassLoaderHelper.getInstance().getEnvironmentSelectionOperator();
 
     /**
+     * Holds the initializing population (for benchmarking purposes against last solutions).
+     */
+    private Population initPopulation = null;
+
+    /**
+     * Returns the initializing population.
+     * @return Initialization population instance
+     */
+    public Population getInitPopulation() {
+        return initPopulation;
+    }
+
+    /**
      * Runs the evolutionary cycle.
      * @param period SchedulingPeriod instance
      * @return Population instance
      */
     public Population evolutionize(SchedulingPeriod period) {
-        Population initPopulation = generateInitializationPopulation(period);
+        initPopulation = generateInitializationPopulation(period);
         initPopulation.benchmark();
 
         Population newPopulation = Population.copy(initPopulation);
