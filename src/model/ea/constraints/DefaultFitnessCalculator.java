@@ -4,6 +4,7 @@ import model.ea.Individual;
 import model.schedule.Attribute;
 import model.schedule.Employee;
 import model.schedule.SchedulingPeriod;
+import org.w3c.dom.Attr;
 
 /**
  * Implements the default fitness calculator which uses algorithms for each
@@ -27,29 +28,35 @@ public class DefaultFitnessCalculator implements IFitnessCalculator {
         this.period = period;
 
         // calculate each deviations
-        fitness += getDeviationMaxNumAssignments();
-        fitness += getDeviationMinNumAssignments();
+        fitness += getDeviationNumAssignments();
+        fitness += getDeviationNumConsecutiveDays();
 
         return fitness;
     }
 
     /**
-     * Calculates the deviation for MaxNumAssignments for each employee.
+     * Calculates the deviation for Min/MaxNumAssignments for each employee.
      * @return Deviation
      */
-    private float getDeviationMaxNumAssignments() {
+    private float getDeviationNumAssignments() {
        float deviation = 0;
 
        // calculate for each employee
        for (Employee employee: period.getEmployees()) {
+           Attribute minNumAssignments = employee.getContract().getMinNumAssignments();
            Attribute maxNumAssignments = employee.getContract().getMaxNumAssignments();
-           int weight = maxNumAssignments.getWeight();
-           int value = maxNumAssignments.getValueInt();
+           int weightMin = minNumAssignments.getWeight();
+           int valueMin = minNumAssignments.getValueInt();
+           int weightMax = maxNumAssignments.getWeight();
+           int valueMax = maxNumAssignments.getValueInt();
            int numAssignments = individual.getNumAssignments(employee);
 
-           // soft-constraint is unsatisfied, add deviation
-           if (numAssignments > value) {
-               deviation += (numAssignments - value) * weight;
+           // if soft-constraints are unsatisfied, add deviation
+           if (numAssignments < valueMin) {
+               deviation += (valueMin - numAssignments) * weightMin;
+           }
+           if (numAssignments > valueMax) {
+               deviation += (numAssignments - valueMax) * weightMax;
            }
        }
 
@@ -57,22 +64,45 @@ public class DefaultFitnessCalculator implements IFitnessCalculator {
     }
 
     /**
-     * Calculates the deviation for MaxNumAssignments for each employee.
+     * Calculates the deviations for Min/MaxNumConsecutive(Free)Days for each employee.
      * @return Deviation
      */
-    private float getDeviationMinNumAssignments() {
+    private float getDeviationNumConsecutiveDays() {
         float deviation = 0;
 
         // calculate for each employee
         for (Employee employee: period.getEmployees()) {
-            Attribute minNumAssignments = employee.getContract().getMinNumAssignments();
-            int weight = minNumAssignments.getWeight();
-            int value = minNumAssignments.getValueInt();
-            int numAssignments = individual.getNumAssignments(employee);
+            Attribute minNumConsecutiveWorkDays = employee.getContract().getMinNumAssignments();
+            Attribute maxNumConsecutiveWorkDays = employee.getContract().getMaxNumAssignments();
+            Attribute minNumConsecutiveFreeDays = employee.getContract().getMinConsecutiveFreeDays();
+            Attribute maxNumConsecutiveFreeDays = employee.getContract().getMaxConsecutiveFreeDays();
 
-            // soft-constraint is unsatisfied, add deviation
-            if (numAssignments < value) {
-                deviation += (value - numAssignments) * weight;
+            int weightMinWork = minNumConsecutiveWorkDays.getWeight();
+            int valueMinWork = minNumConsecutiveWorkDays.getValueInt();
+            int weightMaxWork = maxNumConsecutiveWorkDays.getWeight();
+            int valueMaxWork = maxNumConsecutiveWorkDays.getValueInt();
+            int weightMinFree = minNumConsecutiveFreeDays.getWeight();
+            int valueMinFree = minNumConsecutiveFreeDays.getValueInt();
+            int weightMaxFree = maxNumConsecutiveFreeDays.getWeight();
+            int valueMaxFree = maxNumConsecutiveFreeDays.getValueInt();
+
+            int numConsecutiveWorkDaysMin = individual.getNumConsecutiveDays(employee, false, false);
+            int numConsecutiveWorkDaysMax = individual.getNumConsecutiveDays(employee, true, false);
+            int numConsecutiveFreeDaysMin = individual.getNumConsecutiveDays(employee, false, true);
+            int numConsecutiveFreeDaysMax = individual.getNumConsecutiveDays(employee, true, true);
+
+            // if soft-constraints are unsatisfied, add deviation
+            if (numConsecutiveWorkDaysMin < valueMinWork) {
+                deviation += (valueMinWork - numConsecutiveWorkDaysMin) * weightMinWork;
+            }
+            if (numConsecutiveWorkDaysMax > valueMinWork) {
+                deviation += (numConsecutiveWorkDaysMax - valueMaxWork) * weightMaxWork;
+            }
+            if (numConsecutiveFreeDaysMin < valueMinFree) {
+                deviation += (valueMinFree - numConsecutiveFreeDaysMin) * weightMinFree;
+            }
+            if (numConsecutiveFreeDaysMax > valueMinFree) {
+                deviation += (numConsecutiveFreeDaysMax - valueMaxFree) * weightMaxFree;
             }
         }
 

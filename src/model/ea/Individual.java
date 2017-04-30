@@ -54,6 +54,27 @@ public class Individual {
     private Map<Employee, Integer> numAssignments = new HashMap<Employee, Integer>();
 
     /**
+     * Cache for maximum number of consecutive assignments per employee.
+     */
+    private Map<Employee, Integer> numConsecutiveDaysMaxWork = new HashMap<Employee, Integer>();
+
+    /**
+     * Cache for minimum number of consecutive assignments per employee.
+     */
+    private Map<Employee, Integer> numConsecutiveDaysMinWork = new HashMap<Employee, Integer>();
+
+
+    /**
+     * Cache for maximum number of consecutive free days per employee.
+     */
+    private Map<Employee, Integer> numConsecutiveDaysMaxFree = new HashMap<Employee, Integer>();
+
+    /**
+     * Cache for minimum number of consecutive free days per employee.
+     */
+    private Map<Employee, Integer> numConsecutiveDaysMinFree = new HashMap<Employee, Integer>();
+
+    /**
      * Returns the List of DayRoster instances.
      * @return List of DayRoster instances
      */
@@ -66,7 +87,7 @@ public class Individual {
      * hard constraints are satisfied.
      * @return True, if this individual is a feasible solution
      */
-    public boolean isFeasible() {
+    boolean isFeasible() {
         // check, if hard  constraints for each planned day are satisfied
         for (DayRoster dayRoster: roster) {
             Map<ShiftType, List<Employee>> plannedEmployees = new HashMap<ShiftType, List<Employee>>();
@@ -74,7 +95,7 @@ public class Individual {
 
             for (Map<ShiftType, Employee> map: dayRoster.getDayRoster()) {
                 for (Map.Entry<ShiftType, Employee> roster : map.entrySet()) {
-                    ShiftType shiftType = shiftType = roster.getKey();
+                    ShiftType shiftType = roster.getKey();
                     Employee employee = roster.getValue();
 
                     if (plannedEmployees.containsKey(shiftType)) {
@@ -139,7 +160,7 @@ public class Individual {
      * Returns a deep copy of this instance.
      * @return Individual deep copy instance
      */
-    public static Individual copy(Individual individual) {
+    static Individual copy(Individual individual) {
         Individual copyInstance = new Individual();
         copyInstance.fitness = individual.fitness;
         copyInstance.period = individual.period;
@@ -150,32 +171,6 @@ public class Individual {
         }
 
         return copyInstance;
-    }
-
-    /**
-     * Returns a list of TimeUnit instances for an employee.
-     * This correspondents to Definition 3 (event) of Burke et al. (2001)
-     * "Fitness Evaluation for Nurse Scheduling Problems".
-     * @param employee Employee to get time units
-     * @return List of TimeUnit instances
-     */
-    public List<TimeUnit> getTimeUnitsForEmployee(Employee employee) {
-        List<TimeUnit> timeUnits = new ArrayList<TimeUnit>();
-        for (DayRoster dayRoster: roster) {
-            for (Map<ShiftType, Employee> map: dayRoster.getDayRoster()) {
-                for (Map.Entry<ShiftType, Employee> entry: map.entrySet()) {
-                    ShiftType shiftType = entry.getKey();
-                    Employee currentEmployee = entry.getValue();
-                    TimeUnit timeUnit = TimeUnit.getTimeUnit(dayRoster.getDate(), shiftType);
-
-                    if (currentEmployee.getId() == employee.getId()) {
-                        timeUnits.add(timeUnit);
-                    }
-                }
-            }
-        }
-
-        return timeUnits;
     }
 
     /**
@@ -200,7 +195,7 @@ public class Individual {
     }
 
     /**
-     * Returns the number of assignments per employee
+     * Returns the number of assignments per employee.
      * @param employee Employee instance
      * @return Number of assignments
      */
@@ -220,6 +215,85 @@ public class Individual {
         numAssignments.put(employee, assignments);
 
         return assignments;
+    }
+
+    /**
+     * Returns the (minimum/maximum) number of consecutive assignments/free days per employee.
+     * @param employee Employee instance
+     * @param max If true, returns the maximum number of consecutive events, otherwise minimum
+     * @param free If true, returns the minimum/maximum number of consecutive free days, otherwise assignments
+     * @return Number of consecutive assignments
+     */
+    public int getNumConsecutiveDays(Employee employee, boolean max, boolean free) {
+        // check, if number (maximum/minimum) of consecutive events are already calculated
+        if (!free && !max && numConsecutiveDaysMinWork.containsKey(employee)) {
+            return numConsecutiveDaysMinWork.get(employee);
+        } else if (!free && max && numConsecutiveDaysMaxWork.containsKey(employee)) {
+            return numConsecutiveDaysMaxWork.get(employee);
+        } else if (free & !max && numConsecutiveDaysMinFree.containsKey(employee)) {
+            return numConsecutiveDaysMinFree.get(employee);
+        } else if (free && max && numConsecutiveDaysMaxFree.containsKey(employee)) {
+            return numConsecutiveDaysMaxFree.get(employee);
+        }
+
+        // build a map for each day roster with employee planned booleans
+        Map<DayRoster, Boolean> assigned = new HashMap<DayRoster, Boolean>();
+        for (DayRoster dayRoster: roster) {
+            assigned.put(dayRoster, dayRoster.isEmployeePlanned(employee));
+        }
+
+        // calculate number of consecutive events and store in caches
+        int consecutiveWork = 0, consecutiveFree = 0,
+                lastMinConsecutiveWork = 0, lastMaxConsecutiveWork = 0,
+                lastMinConsecutiveFree = 0, lastMaxConsecutiveFree = 0;
+        boolean yesterdayWork = false, yesterdayFree = false;
+        for (Map.Entry<DayRoster, Boolean> entry: assigned.entrySet()) {
+            if (entry.getValue()) {
+                // employee works today, check if employee also worked yesterday
+                if (yesterdayWork) {
+                    consecutiveWork++;
+                }
+
+                // employee has not free today, update last numbers of consecutive free days
+                if (consecutiveFree > lastMaxConsecutiveFree) {
+                    lastMaxConsecutiveFree = consecutiveFree;
+                }
+                if (lastMinConsecutiveFree == 0
+                        || consecutiveFree > 0 && consecutiveFree < lastMinConsecutiveFree) {
+                    lastMinConsecutiveFree = consecutiveFree;
+                }
+
+                consecutiveFree = 0;
+                yesterdayWork = true;
+                yesterdayFree = false;
+            } else {
+                // employee has free today, check if employee had free yesterday
+                if (yesterdayFree) {
+                    consecutiveFree++;
+                }
+
+                // employee does not work today, update last numbers of consecutive assignments
+                if (consecutiveWork > lastMaxConsecutiveWork) {
+                    lastMaxConsecutiveWork = consecutiveWork;
+                }
+                if (lastMinConsecutiveWork == 0
+                        || consecutiveWork > 0 && consecutiveWork < lastMinConsecutiveWork) {
+                    lastMinConsecutiveWork = consecutiveWork;
+                }
+
+                consecutiveWork = 0;
+                yesterdayWork = false;
+                yesterdayFree = true;
+            }
+        }
+
+        numConsecutiveDaysMinWork.put(employee, lastMinConsecutiveWork);
+        numConsecutiveDaysMaxWork.put(employee, lastMaxConsecutiveWork);
+        numConsecutiveDaysMinFree.put(employee, lastMinConsecutiveFree);
+        numConsecutiveDaysMaxFree.put(employee, lastMaxConsecutiveFree);
+
+        // return minimum or maximum number of consecutive assignments by min
+        return max ? lastMinConsecutiveWork : lastMaxConsecutiveWork;
     }
 
     @Override
