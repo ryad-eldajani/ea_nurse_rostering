@@ -1,6 +1,7 @@
 package model.ea;
 
 import helper.ClassLoaderHelper;
+import helper.DateTimeHelper;
 import model.ea.constraints.IFitnessCalculator;
 import model.schedule.*;
 
@@ -49,6 +50,11 @@ public class Individual {
     private IFitnessCalculator fitnessCalculator = ClassLoaderHelper.getInstance().getFitnessCalculator();
 
     /**
+     * Cache for assignments for each employee.
+     */
+    private Map<Employee, Map<DayRoster, Boolean>> assignments = new HashMap<Employee, Map<DayRoster, Boolean>>();
+
+    /**
      * Cache for number of assignments per employee.
      */
     private Map<Employee, Integer> numAssignments = new HashMap<Employee, Integer>();
@@ -73,6 +79,31 @@ public class Individual {
      * Cache for minimum number of consecutive free days per employee.
      */
     private Map<Employee, Integer> numConsecutiveDaysMinFree = new HashMap<Employee, Integer>();
+
+    /**
+     * Cache for total number of working weekends per employee.
+     */
+    private Map<Employee, Integer> numWeekendsTotal = new HashMap<Employee, Integer>();
+
+    /**
+     * Cache for minimum number of consecutive working weekends per employee.
+     */
+    private Map<Employee, Integer> numConsecutiveWeekendsMin = new HashMap<Employee, Integer>();
+
+    /**
+     * Cache for maximum number of consecutive working weekends per employee.
+     */
+    private Map<Employee, Integer> numConsecutiveWeekendsMax = new HashMap<Employee, Integer>();
+
+    /**
+     * Cache for identical shift types during weekend per employee.
+     */
+    private Map<Employee, Boolean> identicalShiftTypesDuringWeekend = new HashMap<Employee, Boolean>();
+
+    /**
+     * Cache for complete working weekend per employee.
+     */
+    private Map<Employee, Boolean> completeWeekends = new HashMap<Employee, Boolean>();
 
     /**
      * Returns the List of DayRoster instances.
@@ -205,37 +236,40 @@ public class Individual {
         return assignments;
     }
 
+
     /**
-     * Returns the (minimum/maximum) number of consecutive assignments/free days per employee.
+     * Returns a map of DayRoster -> Boolean where Boolean is True, if employee is working that day.
      * @param employee Employee instance
-     * @param max If true, returns the maximum number of consecutive events, otherwise minimum
-     * @param free If true, returns the minimum/maximum number of consecutive free days, otherwise assignments
-     * @return Number of consecutive assignments
+     * @return Map with True/False values for each day of an employee
      */
-    public int getNumConsecutiveDays(Employee employee, boolean max, boolean free) {
-        // check, if number (maximum/minimum) of consecutive events are already calculated
-        if (!free && !max && numConsecutiveDaysMinWork.containsKey(employee)) {
-            return numConsecutiveDaysMinWork.get(employee);
-        } else if (!free && max && numConsecutiveDaysMaxWork.containsKey(employee)) {
-            return numConsecutiveDaysMaxWork.get(employee);
-        } else if (free & !max && numConsecutiveDaysMinFree.containsKey(employee)) {
-            return numConsecutiveDaysMinFree.get(employee);
-        } else if (free && max && numConsecutiveDaysMaxFree.containsKey(employee)) {
-            return numConsecutiveDaysMaxFree.get(employee);
+    private Map<DayRoster, Boolean> getAssignments(Employee employee) {
+        // return assignments, if already calculated
+        if (assignments.containsKey(employee)) {
+            return assignments.get(employee);
         }
 
         // build a map for each day roster with employee planned booleans
-        Map<DayRoster, Boolean> assigned = new HashMap<DayRoster, Boolean>();
+        Map<DayRoster, Boolean> assigned = new LinkedHashMap<DayRoster, Boolean>();
         for (DayRoster dayRoster: roster) {
             assigned.put(dayRoster, dayRoster.isEmployeePlanned(employee));
         }
 
+        // store assignments in cache and return result
+        assignments.put(employee, assigned);
+        return assigned;
+    }
+
+    /**
+     * Calculates the consecutive days information per employee.
+     * @param employee Employee instance
+     */
+    private void calculateConsecutiveDays(Employee employee) {
         // calculate number of consecutive events and store in caches
         int consecutiveWork = 0, consecutiveFree = 0,
                 lastMinConsecutiveWork = 0, lastMaxConsecutiveWork = 0,
                 lastMinConsecutiveFree = 0, lastMaxConsecutiveFree = 0;
         boolean yesterdayWork = false, yesterdayFree = false;
-        for (Map.Entry<DayRoster, Boolean> entry: assigned.entrySet()) {
+        for (Map.Entry<DayRoster, Boolean> entry: getAssignments(employee).entrySet()) {
             if (entry.getValue()) {
                 // employee works today, check if employee also worked yesterday
                 if (yesterdayWork) {
@@ -279,9 +313,150 @@ public class Individual {
         numConsecutiveDaysMaxWork.put(employee, lastMaxConsecutiveWork);
         numConsecutiveDaysMinFree.put(employee, lastMinConsecutiveFree);
         numConsecutiveDaysMaxFree.put(employee, lastMaxConsecutiveFree);
+    }
 
-        // return minimum or maximum number of consecutive assignments by min
-        return max ? lastMinConsecutiveWork : lastMaxConsecutiveWork;
+    /**
+     * Returns the (minimum/maximum) number of consecutive assignments/free days per employee.
+     * @param employee Employee instance
+     * @param max If true, returns the maximum number of consecutive events, otherwise minimum
+     * @param free If true, returns the minimum/maximum number of consecutive free days, otherwise assignments
+     * @return Number of consecutive assignments
+     */
+    public int getNumConsecutiveDays(Employee employee, boolean max, boolean free) {
+        // check, if number (maximum/minimum) of consecutive events are already calculated
+        if (!free && !max && numConsecutiveDaysMinWork.containsKey(employee)) {
+            return numConsecutiveDaysMinWork.get(employee);
+        } else if (!free && max && numConsecutiveDaysMaxWork.containsKey(employee)) {
+            return numConsecutiveDaysMaxWork.get(employee);
+        } else if (free & !max && numConsecutiveDaysMinFree.containsKey(employee)) {
+            return numConsecutiveDaysMinFree.get(employee);
+        } else if (free && max && numConsecutiveDaysMaxFree.containsKey(employee)) {
+            return numConsecutiveDaysMaxFree.get(employee);
+        }
+
+        // we have no consecutive days information, calculate and return info
+        calculateConsecutiveDays(employee);
+
+        // re-run this method to return the calculated values
+        return getNumConsecutiveDays(employee, max, free);
+    }
+
+    /**
+     * Calculates the weekend information per employee.
+     * @param employee Employee instance
+     */
+    private void calculateWeekends(Employee employee) {
+        // calculate number of consecutive events and store in caches
+        int consecutiveWork = 0, totalWork = 0,
+                lastMinConsecutiveWeekendWork = 0, lastMaxConsecutiveWeekendWork = 0;
+        boolean lastWeekendWork = false, completeWeekend = true, identicalShiftTypes = true;
+        ShiftType lastShift = null;
+        for (Map.Entry<DayRoster, Boolean> entry: getAssignments(employee).entrySet()) {
+            DayRoster dayRoster = entry.getKey();
+            Boolean working = entry.getValue();
+
+            if (!DateTimeHelper.getInstance().isWeekend(dayRoster.getDate(), employee.getContract())) {
+                // this day is not a weekend as of weekend definition in contract, go on..
+                continue;
+            }
+
+            if (working) {
+                // this is a weekend day and the employee is working
+                totalWork++;
+
+                // if employee worked last weekend day, increase consecutiveWork
+                if (lastWeekendWork) {
+                    consecutiveWork++;
+                }
+
+                lastWeekendWork = true;
+
+                // check identical shift types
+                if (lastShift == null) {
+                    lastShift = dayRoster.getShiftTypeForEmployee(employee);
+                } else if (lastShift != dayRoster.getShiftTypeForEmployee(employee)) {
+                    // there was another shift type, identicalShiftTypes is not true anymore
+                    identicalShiftTypes = false;
+                }
+            } else {
+                // employee does not work today, update last numbers of consecutive assignments
+                if (consecutiveWork > lastMaxConsecutiveWeekendWork) {
+                    lastMaxConsecutiveWeekendWork = consecutiveWork;
+                }
+                if (lastMinConsecutiveWeekendWork == 0
+                        || consecutiveWork > 0 && consecutiveWork < lastMinConsecutiveWeekendWork) {
+                    lastMinConsecutiveWeekendWork = consecutiveWork;
+                }
+
+                consecutiveWork = 0;
+                lastWeekendWork = false;
+                completeWeekend = false;
+            }
+        }
+
+        numWeekendsTotal.put(employee, totalWork);
+        numConsecutiveWeekendsMin.put(employee, lastMinConsecutiveWeekendWork);
+        numConsecutiveWeekendsMax.put(employee, lastMaxConsecutiveWeekendWork);
+        completeWeekends.put(employee, completeWeekend);
+        identicalShiftTypesDuringWeekend.put(employee, identicalShiftTypes);
+    }
+
+    /**
+     * Returns the (minimum/maximum) number of (consecutive) working weekends days per employee.
+     * @param employee Employee instance
+     * @param max If true, returns the maximum number of (consecutive) working weekends, otherwise minimum
+     * @param consecutive If true, returns the minimum/maximum number of consecutive working weekends, otherwise total
+     * @return Number of consecutive assignments
+     */
+    public int getNumWeekends(Employee employee, boolean max, boolean consecutive) {
+        // check, if number (maximum/minimum) of (consecutive) working weekends are already calculated
+        if (!consecutive && numWeekendsTotal.containsKey(employee)) {
+            return numWeekendsTotal.get(employee);
+        } else if (consecutive & !max && numConsecutiveWeekendsMin.containsKey(employee)) {
+            return numConsecutiveWeekendsMin.get(employee);
+        } else if (consecutive && max && numConsecutiveWeekendsMax.containsKey(employee)) {
+            return numConsecutiveWeekendsMax.get(employee);
+        }
+
+        // we have no weekend information, calculate and return info
+        calculateWeekends(employee);
+
+        // re-run this method to return the calculated values
+        return getNumWeekends(employee, max, consecutive);
+    }
+
+    /**
+     * Returns true, if employee works the whole weekend.
+     * @param employee Employee instance
+     * @return True, if employee works the whole weekend, otherwise false
+     */
+    public boolean isCompleteWeekend(Employee employee) {
+        if (this.completeWeekends.containsKey(employee)) {
+            return this.completeWeekends.get(employee);
+        }
+
+        // we have no weekend information, calculate and return info
+        calculateWeekends(employee);
+
+        // re-run this method to return the calculated values
+        return isCompleteWeekend(employee);
+    }
+
+    /**
+     * Returns true, if employee has identical shift types during working weekends.
+     * @param employee Employee instance
+     * @return True, if employee has identical shift types during working weekends, otherwise false
+     */
+    public boolean isIdenticalShiftTypesDuringWeekend(Employee employee) {
+        if (this.identicalShiftTypesDuringWeekend.containsKey(employee)) {
+            return this.identicalShiftTypesDuringWeekend.get(employee);
+        }
+
+        // we have no weekend information, calculate and return info
+        calculateWeekends(employee);
+
+        // re-run this method to return the calculated values
+        return isIdenticalShiftTypesDuringWeekend(employee);
     }
 
     @Override

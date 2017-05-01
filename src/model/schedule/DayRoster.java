@@ -107,6 +107,37 @@ public class DayRoster {
         return true;
     }
 
+    /**
+     * Adds a roster information.
+     * @param shiftType ShiftType instance
+     * @param employee Employee instance
+     */
+    public void addToDayRoster(ShiftType shiftType, Employee employee) {
+        Map<ShiftType, Employee> map = new HashMap<ShiftType, Employee>();
+        map.put(shiftType, employee);
+        roster.add(map);
+    }
+
+    /**
+     * Returns the shift type of employee for this day if available, otherwise null.
+     * @param employee Employee instance
+     * @return ShiftType instance for employee or null
+     */
+    public ShiftType getShiftTypeForEmployee(Employee employee) {
+        for (Map<ShiftType, Employee> map: roster) {
+            for (Map.Entry<ShiftType, Employee> entry : map.entrySet()) {
+                ShiftType shiftType = entry.getKey();
+                Employee employee1 = entry.getValue();
+
+                if (employee1.equals(employee)) {
+                    return shiftType;
+                }
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         List<String> out = new ArrayList<String>();
@@ -124,16 +155,5 @@ public class DayRoster {
         }
 
         return out.toString();
-    }
-
-    /**
-     * Adds a roster information.
-     * @param shiftType ShiftType instance
-     * @param employee Employee instance
-     */
-    public void addToDayRoster(ShiftType shiftType, Employee employee) {
-        Map<ShiftType, Employee> map = new HashMap<ShiftType, Employee>();
-        map.put(shiftType, employee);
-        roster.add(map);
     }
 }

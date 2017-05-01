@@ -39,7 +39,7 @@ public class FilesystemHelper {
      */
     private String parsePlaceholders(String filename) {
         String date = DateTimeHelper.getInstance().getDateStringReversed("_");
-        String time = DateTimeHelper.getInstance().getTimeString("_");
+        String time = DateTimeHelper.getInstance().getTimeString();
         String homeDirectory = System.getProperty("user.home");
 
         return filename.replace("/", System.getProperty("file.separator"))
@@ -63,7 +63,7 @@ public class FilesystemHelper {
      * @param destFile Destination file
      * @throws IOException Exception on IO error.
      */
-    public void copyFile(String sourceFile, String destFile) throws IOException {
+    void copyFile(String sourceFile, String destFile) throws IOException {
         if (!(new File(destFile)).exists()) {
             (new File(destFile)).createNewFile();
         }
