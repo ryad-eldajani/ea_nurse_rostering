@@ -13,6 +13,7 @@ import java.util.Map;
 /**
  * Concrete construction heuristic by assigning nurses randomly.
  */
+@SuppressWarnings("unused")
 public class RandomConstructionHeuristic implements IConstructionHeuristic {
     @Override
     public Individual getIndividual(SchedulingPeriod period) {

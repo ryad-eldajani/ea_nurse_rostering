@@ -17,10 +17,9 @@ public class SimpleEnvironmentSelectionOperator implements IEnvironmentSelection
     /**
      * Selects the fittest individuals from a population.
      * @param population Old generation Population instance
-     * @param optionalArguments optional Arguments
      */
     @Override
-    public void select(Population population, Map<String, Object> optionalArguments) {
+    public void select(Population population) {
         // If there are less or equal individuals in this population than
         // configured, just abort.
         if (population.getPool().size() <= individualsPerPopulation) {

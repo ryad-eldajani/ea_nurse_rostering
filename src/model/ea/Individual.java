@@ -180,18 +180,6 @@ public class Individual {
      */
     public void addDayRoster(DayRoster dayRoster) {
         roster.add(dayRoster);
-
-        // update time units
-        for (Map<ShiftType, Employee> map: dayRoster.getDayRoster()) {
-            for (Map.Entry<ShiftType, Employee> entry: map.entrySet()) {
-                ShiftType shiftType = entry.getKey();
-                Date date = dayRoster.getDate();
-                Employee employee = entry.getValue();
-
-                TimeUnit timeUnit = TimeUnit.getTimeUnit(date, shiftType);
-                timeUnit.addEmployee(employee);
-            }
-        }
     }
 
     /**

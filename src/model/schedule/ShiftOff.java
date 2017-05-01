@@ -22,14 +22,6 @@ public class ShiftOff {
     private Date date;
 
     /**
-     * Returns the shift type.
-     * @return ShiftType instance.
-     */
-    public ShiftType getShiftType() {
-        return shiftType;
-    }
-
-    /**
      * Sets the shift type.
      * @param shiftType ShiftType instance.
      */

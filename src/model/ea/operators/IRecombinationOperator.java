@@ -1,7 +1,6 @@
 package model.ea.operators;
 
 import model.ea.Individual;
-import model.ea.Population;
 
 import java.util.List;
 

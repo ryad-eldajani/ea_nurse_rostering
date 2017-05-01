@@ -6,7 +6,6 @@ import helper.TuiHelper;
 import model.ea.EvolutionaryCycle;
 import model.ea.Individual;
 import model.ea.Population;
-import model.schedule.Numbering;
 import model.schedule.SchedulingPeriod;
 import parser.IParser;
 import writer.IWriter;
@@ -79,13 +78,8 @@ public class Start {
     private SchedulingPeriod parseSchedulingPeriod() {
         IParser parser = ClassLoaderHelper.getInstance().getParser();
 
-        // try to load the desired scheduling period
-        SchedulingPeriod period = parser.loadFile("data/"
+        // try to load and return the desired scheduling period
+        return parser.loadFile("data/"
                 + ConfigurationHelper.getInstance().getProperty("PeriodFile", "toy1.xml"));
-
-        // setup the correct numberings for this scheduling period
-        Numbering.setupNumberings(period);
-
-        return period;
     }
 }

@@ -4,12 +4,12 @@ import model.ea.Individual;
 import model.schedule.Attribute;
 import model.schedule.Employee;
 import model.schedule.SchedulingPeriod;
-import org.w3c.dom.Attr;
 
 /**
  * Implements the default fitness calculator which uses algorithms for each
  * soft constraint to calculate the overall fitness.
  */
+@SuppressWarnings("unused")
 public class DefaultFitnessCalculator implements IFitnessCalculator {
     /**
      * Holds the current individual instance.

@@ -1,8 +1,6 @@
 package writer;
 
 import model.ea.Individual;
-import model.schedule.SchedulingPeriod;
-import parser.IParser;
 
 /**
  * Class to write a text solution file.

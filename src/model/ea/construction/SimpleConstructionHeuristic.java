@@ -12,12 +12,12 @@ import java.util.*;
 /**
  * Concrete construction heuristic by assigning first available nurses.
  */
+@SuppressWarnings("unused")
 public class SimpleConstructionHeuristic implements IConstructionHeuristic {
     @Override
     public Individual getIndividual(SchedulingPeriod period) {
         Individual individual = new Individual();
         individual.setSchedulingPeriod(period);
-        int numberOfEmployees = period.getEmployees().size();
 
         // iterate over every day
         for (int dayNumber = 0; dayNumber < DateTimeHelper.getInstance().getNumberOfDays(period); dayNumber++) {

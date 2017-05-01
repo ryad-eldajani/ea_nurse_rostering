@@ -89,22 +89,6 @@ public class Employee {
         this.skills = skills;
     }
 
-    public List<DayOff> getDayOffRequests() {
-        return dayOffRequests;
-    }
-
-    public void setDayOffRequests(List<DayOff> dayOffRequests) {
-        this.dayOffRequests = dayOffRequests;
-    }
-
-    public List<ShiftOff> getShiftOffRequests() {
-        return shiftOffRequests;
-    }
-
-    public void setShiftOffRequests(List<ShiftOff> shiftOffRequests) {
-        this.shiftOffRequests = shiftOffRequests;
-    }
-
     /**
      * Returns true, if employee has required skills for a specific shift type.
      * @param shiftType ShiftType instance
@@ -112,7 +96,6 @@ public class Employee {
      */
     public boolean hasRequiredSkillsForShiftType(ShiftType shiftType) {
         // Check, if employee has required skill.
-        boolean hasSkills = false;
         for (Skill skill: skills) {
             if (shiftType.getRequiredSkills().contains(skill)) {
                 return true;

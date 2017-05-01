@@ -49,7 +49,7 @@ public class Cover {
      * Returns covering information.
      * @return Cover information.
      */
-    public Map<ShiftType, Integer> getCovers() {
+    Map<ShiftType, Integer> getCovers() {
         return covers;
     }
 
@@ -72,7 +72,7 @@ public class Cover {
      * @param date Date instance
      * @return Count of preferred employees per shift type
      */
-    public Integer getPreferredEmployeeCount(ShiftType shiftType, Date date) {
+    Integer getPreferredEmployeeCount(ShiftType shiftType, Date date) {
         for (Map.Entry<ShiftType, Integer> cover: covers.entrySet()) {
             if (shiftType.equals(cover.getKey()) && DateTimeHelper.getInstance().getDayByDate(date).equals(day)) {
                 return cover.getValue();
