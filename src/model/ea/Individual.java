@@ -111,34 +111,6 @@ public class Individual {
     private Map<Employee, Boolean> noNightShiftsBeforeWeekends = new HashMap<Employee, Boolean>();
 
     /**
-     * Options for day information references.
-     */
-    private enum DayOption {
-        CONSECUTIVE_MIN_WORK, CONSECUTIVE_MAX_WORK, CONSECUTIVE_MIN_FREE, CONSECUTIVE_MAX_FREE
-    }
-    private final Map<DayOption, Map> dayOptions = new HashMap<DayOption, Map>() {{
-        put(DayOption.CONSECUTIVE_MIN_WORK, numConsecutiveMinWork);
-        put(DayOption.CONSECUTIVE_MAX_WORK, numConsecutiveMaxWork);
-        put(DayOption.CONSECUTIVE_MIN_FREE, numConsecutiveMinFree);
-        put(DayOption.CONSECUTIVE_MAX_FREE, numConsecutiveMaxFree);
-    }};
-
-    /**
-     * Options for weekend information references.
-     */
-    private enum WeekendOption {
-        TOTAL, CONSECUTIVE_MIN, CONSECUTIVE_MAX, IS_COMPLETE,
-        IS_IDENTICAL_SHIFT_TYPE, IS_NO_NIGHT_SHIFTS_BEFORE_WEEKEND
-    }
-    private final Map<WeekendOption, Map> weekendOptions = new HashMap<WeekendOption, Map>() {{
-        put(WeekendOption.TOTAL, numWeekendsTotal);
-        put(WeekendOption.CONSECUTIVE_MIN, numConsecutiveWeekendsMin);
-        put(WeekendOption.CONSECUTIVE_MAX, numConsecutiveWeekendsMax);
-        put(WeekendOption.IS_COMPLETE, completeWeekends);
-        put(WeekendOption.IS_IDENTICAL_SHIFT_TYPE, identicalShiftTypesDuringWeekend);
-        put(WeekendOption.IS_NO_NIGHT_SHIFTS_BEFORE_WEEKEND, noNightShiftsBeforeWeekends);
-    }};
-    /**
      * Returns the List of DayRoster instances.
      * @return List of DayRoster instances
      */
@@ -348,22 +320,22 @@ public class Individual {
     }
 
     /**
-     * Returns the requested consecutive event per employee by option.
+     * Returns the requested consecutive event per employee.
      * @param employee Employee instance
-     * @param option DayOption element
+     * @param map Map instance
      * @return Integer of consecutive events
      */
-    private int getDayInformation(Employee employee, DayOption option) {
+    private int getDayInformation(Employee employee, Map map) {
         // check, if number (maximum/minimum) of consecutive events are already calculated
-        if (dayOptions.containsKey(option) && dayOptions.get(option).containsKey(employee)) {
-            return (Integer) dayOptions.get(option).get(employee);
+        if (map.containsKey(employee)) {
+            return (Integer) map.get(employee);
         }
 
         // we have no consecutive days information, calculate and return info
         calculateConsecutiveDays(employee);
 
         // re-run this method to return the calculated values
-        return getDayInformation(employee, option);
+        return getDayInformation(employee, map);
     }
 
     /**
@@ -372,7 +344,7 @@ public class Individual {
      * @return Minimum number of consecutive working days per employee
      */
     public int getNumMinConsecutiveWork(Employee employee) {
-        return getDayInformation(employee, DayOption.CONSECUTIVE_MIN_WORK);
+        return getDayInformation(employee, numConsecutiveMinWork);
     }
 
     /**
@@ -381,7 +353,7 @@ public class Individual {
      * @return Maximum number of consecutive working days per employee
      */
     public int getNumMaxConsecutiveWork(Employee employee) {
-        return getDayInformation(employee, DayOption.CONSECUTIVE_MAX_WORK);
+        return getDayInformation(employee, numConsecutiveMaxWork);
     }
 
     /**
@@ -390,7 +362,7 @@ public class Individual {
      * @return Minimum number of consecutive free days per employee
      */
     public int getNumMinConsecutiveFree(Employee employee) {
-        return getDayInformation(employee, DayOption.CONSECUTIVE_MIN_FREE);
+        return getDayInformation(employee, numConsecutiveMinFree);
     }
 
     /**
@@ -399,7 +371,7 @@ public class Individual {
      * @return Maximum number of consecutive free days per employee
      */
     public int getNumMaxConsecutiveFree(Employee employee) {
-        return getDayInformation(employee, DayOption.CONSECUTIVE_MAX_FREE);
+        return getDayInformation(employee, numConsecutiveMaxFree);
     }
 
     /**
@@ -474,19 +446,21 @@ public class Individual {
     }
 
     /**
-     * Returns the requested weekend information by weekendOptions[option].
-     * @return Object Weekend information as integer or boolean
+     * Returns the requested weekend information per employee.
+     * @param employee Employee instance
+     * @param map Map instance
+     * @return Integer|Boolean of weekend information
      * */
-    private Object getWeekendInformation(Employee employee, WeekendOption option) {
-        if (weekendOptions.containsKey(option) && weekendOptions.get(option).containsKey(employee)) {
-            return weekendOptions.get(option).get(employee);
+    private Object getWeekendInformation(Employee employee, Map map) {
+        if (map.containsKey(employee)) {
+            return map.get(employee);
         }
 
         // we have no weekend information, calculate and return info
         calculateWeekends(employee);
 
         // re-run this method to return the calculated value
-        return getWeekendInformation(employee, option);
+        return getWeekendInformation(employee, map);
     }
 
     /**
@@ -495,7 +469,7 @@ public class Individual {
      * @return Total number of working weekends per employee
      */
     public int getNumTotalWeekendsWork(Employee employee) {
-        return (Integer) getWeekendInformation(employee, WeekendOption.TOTAL);
+        return (Integer) getWeekendInformation(employee, numWeekendsTotal);
     }
 
     /**
@@ -504,7 +478,7 @@ public class Individual {
      * @return Minimum number of consecutive working weekends per employee
      */
     public int getNumMinConsecutiveWeekendsWork(Employee employee) {
-        return (Integer) getWeekendInformation(employee, WeekendOption.CONSECUTIVE_MIN);
+        return (Integer) getWeekendInformation(employee, numConsecutiveWeekendsMin);
     }
 
     /**
@@ -513,7 +487,7 @@ public class Individual {
      * @return Maximum number of consecutive working weekends per employee
      */
     public int getNumMaxConsecutiveWeekendsWork(Employee employee) {
-        return (Integer) getWeekendInformation(employee, WeekendOption.CONSECUTIVE_MAX);
+        return (Integer) getWeekendInformation(employee, numConsecutiveWeekendsMax);
     }
 
     /**
@@ -522,7 +496,7 @@ public class Individual {
      * @return True, if employee has to work completely on weekends, otherwise false
      */
     public boolean isCompleteWeekends(Employee employee) {
-        return (Boolean) getWeekendInformation(employee, WeekendOption.IS_COMPLETE);
+        return (Boolean) getWeekendInformation(employee, completeWeekends);
     }
 
     /**
@@ -531,7 +505,7 @@ public class Individual {
      * @return True, if employee has only identical shift types on weekends, otherwise false
      */
     public boolean isIdenticalShiftType(Employee employee) {
-        return (Boolean) getWeekendInformation(employee, WeekendOption.IS_IDENTICAL_SHIFT_TYPE);
+        return (Boolean) getWeekendInformation(employee, identicalShiftTypesDuringWeekend);
     }
 
     /**
@@ -540,7 +514,7 @@ public class Individual {
      * @return True, if employee has no night shifts before a free weekends, otherwise false
      */
     public boolean isNoNightShiftsBeforeFreeWeekend(Employee employee) {
-        return (Boolean) getWeekendInformation(employee, WeekendOption.IS_NO_NIGHT_SHIFTS_BEFORE_WEEKEND);
+        return (Boolean) getWeekendInformation(employee, noNightShiftsBeforeWeekends);
     }
 
     @Override
