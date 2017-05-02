@@ -24,7 +24,7 @@ public class qStepwiseTournamentSelection implements IEnvironmentSelectionOperat
  * @return
  */
 	@Override
-	public void select (Population currentPopulation, Map<String, Object> optionalArguments) { // int numberOfDirectDuels, int numberOfSelections, SchedulingPeriod sp
+	public void select (Population currentPopulation, Map<String, Object> optionalArguments) { 
 		
 		Population newPopulation = currentPopulation; // the new Population for the next generation
 		List<Individual> toRemove = new ArrayList<Individual>(); // the non-selected individuals are written in this list
@@ -36,8 +36,8 @@ public class qStepwiseTournamentSelection implements IEnvironmentSelectionOperat
 			for (int j = 0; j < numberOfDirectDuels; j++) { // every tournament has the same number of direct Duels
 				int enemy = j;
 				
-				while (enemy == j){ 
-					enemy = new Random().nextInt(currentPopulation.getPool().size()) + 1; // the enemy is selected randomly from the population
+				while (enemy == j){ // as long as the individual itself is chosen randomly out of the population
+					enemy = new Random().nextInt(currentPopulation.getPool().size()); // the enemy is selected randomly from the population
 				}
 				
 				if (currentPopulation.getPool().get(i).getFitness() > currentPopulation.getPool().get(enemy).getFitness()){ 
@@ -46,7 +46,7 @@ public class qStepwiseTournamentSelection implements IEnvironmentSelectionOperat
 			scores[i] = wins; // all wins of the individual are summed up to its score
 			}
 		
-		for (int j = 0; j < currentPopulation.getPool().size()-numberOfSelections; j++) { // the number of not needed individuals for the next generation are taken from the current population
+		for (int j = 0; j < currentPopulation.getPool().size() - numberOfSelections; j++) { // the number of not needed individuals for the next generation are taken from the current population
 			toRemove.add(currentPopulation.getPool().get(getIndexOfMin(scores))); // the individual with the lowest score are selected		
 			}
 		}
