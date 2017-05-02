@@ -124,27 +124,27 @@ public class DefaultFitnessCalculator implements IFitnessCalculator {
                     minNumConsecutiveWorkWeekends = employee.getContract().getMinConsecutiveWorkingWeekends(),
                     maxNumConsecutiveWorkWeekends = employee.getContract().getMaxConsecutiveWorkingWeekends(),
                     completeWeekends = employee.getContract().getCompleteWeekends(),
-                    identicalShiftTypes = employee.getContract().getIdenticalShiftTypesDuringWeekend();
+                    identicalShiftTypes = employee.getContract().getIdenticalShiftTypesDuringWeekend(),
+                    noNightShiftsBeforeWeekends = employee.getContract().getNoNightShiftBeforeFreeWeekend();
 
             int weightTotalWork = totalNumWorkWeekends.getWeight(),
                     weightMinConsecutiveWork = minNumConsecutiveWorkWeekends.getWeight(),
                     weightMaxConsecutiveWork = maxNumConsecutiveWorkWeekends.getWeight(),
                     weightCompleteWeekends = completeWeekends.getWeight(),
-                    weightIdenticalShiftTypes = identicalShiftTypes.getWeight();
+                    weightIdenticalShiftTypes = identicalShiftTypes.getWeight(),
+                    weightNoNightShiftsBeforeWeekends = noNightShiftsBeforeWeekends.getWeight();
 
             int valueMinTotal = totalNumWorkWeekends.getValueInt(),
                     valueMinConsecutiveWork = minNumConsecutiveWorkWeekends.getValueInt(),
                     valueMaxConsecutiveWork = maxNumConsecutiveWorkWeekends.getValueInt();
 
             boolean valueCompleteWeekends = completeWeekends.getValueBoolean(),
-                    valueIdenticalShiftTypes = identicalShiftTypes.getValueBoolean();
+                    valueIdenticalShiftTypes = identicalShiftTypes.getValueBoolean(),
+                    valueNoNightShiftsBeforeWeekends = noNightShiftsBeforeWeekends.getValueBoolean();
 
-            int numTotalWeekendsWork = individual.getNumWeekends(employee, false, false),
-                    numMinConsecutiveWeekendsWork = individual.getNumWeekends(employee, false, true),
-                    numMaxConsecutiveWeekendsWork = individual.getNumWeekends(employee, true, true);
-
-            boolean isCompleteWeekends = individual.isCompleteWeekend(employee),
-                    isIdenticalShiftTypes = individual.isIdenticalShiftTypesDuringWeekend(employee);
+            int numTotalWeekendsWork = (Integer) individual.getWeekendInformation(employee, "total"),
+                    numMinConsecutiveWeekendsWork = (Integer) individual.getWeekendInformation(employee, "consecutive_min"),
+                    numMaxConsecutiveWeekendsWork = (Integer) individual.getWeekendInformation(employee, "consecutive_max");
 
             // if soft-constraints are unsatisfied, add deviation
             if (numTotalWeekendsWork < valueMinTotal) {
@@ -159,11 +159,17 @@ public class DefaultFitnessCalculator implements IFitnessCalculator {
             if (numMaxConsecutiveWeekendsWork > valueMaxConsecutiveWork) {
                 deviation += (numMaxConsecutiveWeekendsWork - valueMaxConsecutiveWork) * weightMaxConsecutiveWork;
             }
-            if (valueCompleteWeekends != isCompleteWeekends) {
+            if (valueCompleteWeekends
+                    != (Boolean) individual.getWeekendInformation(employee, "is_complete")) {
                 deviation += weightCompleteWeekends;
             }
-            if (valueIdenticalShiftTypes != isIdenticalShiftTypes) {
+            if (valueIdenticalShiftTypes
+                    != (Boolean) individual.getWeekendInformation(employee, "is_identical_shift_type")) {
                 deviation += weightIdenticalShiftTypes;
+            }
+            if (valueNoNightShiftsBeforeWeekends
+                    != (Boolean) individual.getWeekendInformation(employee, "is_no_night_shifts_before_weekend")) {
+                deviation += weightNoNightShiftsBeforeWeekends;
             }
         }
 

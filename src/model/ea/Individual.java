@@ -106,6 +106,11 @@ public class Individual {
     private Map<Employee, Boolean> completeWeekends = new HashMap<Employee, Boolean>();
 
     /**
+     * Cache for no night shifts before weekend per employee.
+     */
+    private Map<Employee, Boolean> noNightShiftsBeforeWeekends = new HashMap<Employee, Boolean>();
+
+    /**
      * Returns the List of DayRoster instances.
      * @return List of DayRoster instances
      */
@@ -349,8 +354,14 @@ public class Individual {
         // calculate number of consecutive events and store in caches
         int consecutiveWork = 0, totalWork = 0,
                 lastMinConsecutiveWeekendWork = 0, lastMaxConsecutiveWeekendWork = 0;
-        boolean lastWeekendWork = false, completeWeekend = true, identicalShiftTypes = true;
+
+        boolean lastWeekendWork = false,
+                completeWeekend = true,
+                identicalShiftTypes = true,
+                noNight = true;
+
         ShiftType lastShift = null;
+
         for (Map.Entry<DayRoster, Boolean> entry: getAssignments(employee).entrySet()) {
             DayRoster dayRoster = entry.getKey();
             Boolean working = entry.getValue();
@@ -379,13 +390,17 @@ public class Individual {
                     identicalShiftTypes = false;
                 }
             } else {
-                // employee does not work today, update last numbers of consecutive assignments
+                // employee does not work today, update last numbers of consecutive events
                 if (consecutiveWork > lastMaxConsecutiveWeekendWork) {
                     lastMaxConsecutiveWeekendWork = consecutiveWork;
                 }
                 if (lastMinConsecutiveWeekendWork == 0
                         || consecutiveWork > 0 && consecutiveWork < lastMinConsecutiveWeekendWork) {
                     lastMinConsecutiveWeekendWork = consecutiveWork;
+                }
+                // check, if last shift type was not a night shift
+                if (lastShift != null && lastShift.isNight()) {
+                    noNight = false;
                 }
 
                 consecutiveWork = 0;
@@ -399,64 +414,35 @@ public class Individual {
         numConsecutiveWeekendsMax.put(employee, lastMaxConsecutiveWeekendWork);
         completeWeekends.put(employee, completeWeekend);
         identicalShiftTypesDuringWeekend.put(employee, identicalShiftTypes);
+        noNightShiftsBeforeWeekends.put(employee, noNight);
     }
 
     /**
-     * Returns the (minimum/maximum) number of (consecutive) working weekends days per employee.
-     * @param employee Employee instance
-     * @param max If true, returns the maximum number of (consecutive) working weekends, otherwise minimum
-     * @param consecutive If true, returns the minimum/maximum number of consecutive working weekends, otherwise total
-     * @return Number of consecutive assignments
+     * Options for weekend information after calculation.
      */
-    public int getNumWeekends(Employee employee, boolean max, boolean consecutive) {
-        // check, if number (maximum/minimum) of (consecutive) working weekends are already calculated
-        if (!consecutive && numWeekendsTotal.containsKey(employee)) {
-            return numWeekendsTotal.get(employee);
-        } else if (consecutive & !max && numConsecutiveWeekendsMin.containsKey(employee)) {
-            return numConsecutiveWeekendsMin.get(employee);
-        } else if (consecutive && max && numConsecutiveWeekendsMax.containsKey(employee)) {
-            return numConsecutiveWeekendsMax.get(employee);
+    private final Map<String, Map> weekendOptions = new HashMap<String, Map>() {{
+        put("total", numWeekendsTotal);
+        put("consecutive_min", numConsecutiveWeekendsMin);
+        put("consecutive_max", numConsecutiveWeekendsMax);
+        put("is_complete", completeWeekends);
+        put("is_identical_shift_type", identicalShiftTypesDuringWeekend);
+        put("is_no_night_shifts_before_weekend", noNightShiftsBeforeWeekends);
+    }};
+
+    /**
+     * Returns the requested weekend information by weekendOptions[option].
+     * @return Object Weekend information as integer or boolean
+     * */
+    public Object getWeekendInformation(Employee employee, String option) {
+        if (weekendOptions.containsKey(option) && weekendOptions.get(option).containsKey(employee)) {
+            return weekendOptions.get(option).get(employee);
         }
 
         // we have no weekend information, calculate and return info
         calculateWeekends(employee);
 
-        // re-run this method to return the calculated values
-        return getNumWeekends(employee, max, consecutive);
-    }
-
-    /**
-     * Returns true, if employee works the whole weekend.
-     * @param employee Employee instance
-     * @return True, if employee works the whole weekend, otherwise false
-     */
-    public boolean isCompleteWeekend(Employee employee) {
-        if (this.completeWeekends.containsKey(employee)) {
-            return this.completeWeekends.get(employee);
-        }
-
-        // we have no weekend information, calculate and return info
-        calculateWeekends(employee);
-
-        // re-run this method to return the calculated values
-        return isCompleteWeekend(employee);
-    }
-
-    /**
-     * Returns true, if employee has identical shift types during working weekends.
-     * @param employee Employee instance
-     * @return True, if employee has identical shift types during working weekends, otherwise false
-     */
-    public boolean isIdenticalShiftTypesDuringWeekend(Employee employee) {
-        if (this.identicalShiftTypesDuringWeekend.containsKey(employee)) {
-            return this.identicalShiftTypesDuringWeekend.get(employee);
-        }
-
-        // we have no weekend information, calculate and return info
-        calculateWeekends(employee);
-
-        // re-run this method to return the calculated values
-        return isIdenticalShiftTypesDuringWeekend(employee);
+        // re-run this method to return the calculated value
+        return getWeekendInformation(employee, option);
     }
 
     @Override
