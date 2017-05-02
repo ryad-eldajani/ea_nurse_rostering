@@ -1,7 +1,5 @@
 package model.ea;
 
-import model.schedule.SchedulingPeriod;
-
 import java.util.*;
 
 /**
@@ -39,14 +37,14 @@ public class Population {
     /**
      * Default constructor.
      */
-    public Population() {}
+    Population() {}
 
     /**
      * Returns a deep copy of this instance.
      * @param population Population instance to copy
      * @return Population instance as deep copy
      */
-    public static Population copy(Population population) {
+    static Population copy(Population population) {
         Population copyInstance = new Population();
         // deep copy old generation
         for (Individual individual: population.pool) {
@@ -79,10 +77,9 @@ public class Population {
     /**
      * Adds an Individual instance to the pool list.
      * @param individual Individual instance
-     * @param period SchedulingPeriod instance
      * @throws IndividualNotFeasibleException Exception if individual is not feasible
      */
-    public void addIndividualToPool(Individual individual, SchedulingPeriod period) throws IndividualNotFeasibleException {
+    void addIndividualToPool(Individual individual) throws IndividualNotFeasibleException {
         if (!individual.isFeasible()) {
             throw new IndividualNotFeasibleException();
         }
@@ -92,12 +89,11 @@ public class Population {
     /**
      * Adds a list of Individual instance to the pool list.
      * @param individuals List of Individual instances
-     * @param period SchedulingPeriod instance
      */
-    public void addIndividualsToPool(List<Individual> individuals, SchedulingPeriod period) {
+    void addIndividualsToPool(List<Individual> individuals) {
         for (Individual individual: individuals) {
             try {
-                addIndividualToPool(individual, period);
+                addIndividualToPool(individual);
             } catch (IndividualNotFeasibleException e) {
                 System.out.println("Individual not feasible.");
             }
@@ -107,7 +103,7 @@ public class Population {
     /**
      * Calculates the fitness of every individual.
      */
-    public void benchmark() {
+    void benchmark() {
         overallFitness = 0d;
         for (Individual individual: pool) {
             overallFitness += individual.getFitness();
@@ -128,5 +124,13 @@ public class Population {
             }
         });
         return this;
+    }
+
+    /**
+     * Returns the individual with the best fitness from this population.
+     * @return Best individual
+     */
+    public Individual getBestIndividual() {
+        return this.sortByFitness().pool.get(0);
     }
 }

@@ -24,7 +24,6 @@ public class Contract {
     private Attribute maxConsecutiveFreeDays;
     private Attribute minConsecutiveWorkingWeekends;
     private Attribute maxConsecutiveWorkingWeekends;
-    private Attribute minWorkingWeekendsInFourWeeks;
     private Attribute maxWorkingWeekendsInFourWeeks;
     private List<Day> weekendDefinition = new ArrayList<Day>();
     private Attribute completeWeekends;
@@ -117,10 +116,6 @@ public class Contract {
 
     public Attribute getMaxConsecutiveWorkingWeekends() {
         return maxConsecutiveWorkingWeekends;
-    }
-
-    public Attribute getMinWorkingWeekendsInFourWeeks() {
-        return minWorkingWeekendsInFourWeeks;
     }
 
     public Attribute getMaxWorkingWeekendsInFourWeeks() {

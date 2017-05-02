@@ -56,12 +56,25 @@ public class EvolutionaryCycle {
     private IEnvironmentSelectionOperator environmentSelectionOperator = ClassLoaderHelper.getInstance().getEnvironmentSelectionOperator();
 
     /**
+     * Holds the initializing population (for benchmarking purposes against last solutions).
+     */
+    private Population initPopulation = null;
+
+    /**
+     * Returns the initializing population.
+     * @return Initialization population instance
+     */
+    public Population getInitPopulation() {
+        return initPopulation;
+    }
+
+    /**
      * Runs the evolutionary cycle.
      * @param period SchedulingPeriod instance
      * @return Population instance
      */
     public Population evolutionize(SchedulingPeriod period) {
-        Population initPopulation = generateInitializationPopulation(period);
+        initPopulation = generateInitializationPopulation(period);
         initPopulation.benchmark();
 
         Population newPopulation = Population.copy(initPopulation);
@@ -86,13 +99,13 @@ public class EvolutionaryCycle {
             // Replace new population by old population and add
             // new individuals to the new generation.
             newPopulation = oldPopulation;
-            newPopulation.addIndividualsToPool(newIndividuals, period);
+            newPopulation.addIndividualsToPool(newIndividuals);
 
             // benchmark new generation
             newPopulation.benchmark();
 
             // get environmental selection from new generation
-            environmentSelectionOperator.select(newPopulation, null);
+            environmentSelectionOperator.select(newPopulation);
         }
 
         // cycle is terminated, return the latest solution
@@ -119,7 +132,7 @@ public class EvolutionaryCycle {
         for (int i = 0; i < ConfigurationHelper.getInstance().getPropertyInteger("IndividualsPerPopulation", 10); i++) {
             Individual individual = ClassLoaderHelper.getInstance().getConstructionHeuristic().getIndividual(period);
             try {
-                population.addIndividualToPool(individual, period);
+                population.addIndividualToPool(individual);
             } catch (IndividualNotFeasibleException e) {
                 e.printStackTrace();
             }

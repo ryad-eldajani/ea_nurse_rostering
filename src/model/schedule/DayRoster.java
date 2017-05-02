@@ -107,24 +107,6 @@ public class DayRoster {
         return true;
     }
 
-    @Override
-    public String toString() {
-        List<String> out = new ArrayList<String>();
-        out.add(DateTimeHelper.getInstance().getDateString(date) + " "
-            + DateTimeHelper.getInstance().getDayByDate(date));
-
-        for (Map<ShiftType, Employee> map: roster) {
-            for (Map.Entry<ShiftType, Employee> entry: map.entrySet()) {
-                ShiftType shiftType = entry.getKey();
-                Employee employee = entry.getValue();
-
-                out.add("(Shift type: " + shiftType.getId() + ", Employee: " + employee.getName() + " " + employee.getSkills() + ")");
-            }
-        }
-
-        return out.toString();
-    }
-
     /**
      * Adds a roster information.
      * @param shiftType ShiftType instance
@@ -134,5 +116,44 @@ public class DayRoster {
         Map<ShiftType, Employee> map = new HashMap<ShiftType, Employee>();
         map.put(shiftType, employee);
         roster.add(map);
+    }
+
+    /**
+     * Returns the shift type of employee for this day if available, otherwise null.
+     * @param employee Employee instance
+     * @return ShiftType instance for employee or null
+     */
+    public ShiftType getShiftTypeForEmployee(Employee employee) {
+        for (Map<ShiftType, Employee> map: roster) {
+            for (Map.Entry<ShiftType, Employee> entry : map.entrySet()) {
+                ShiftType shiftType = entry.getKey();
+                Employee employee1 = entry.getValue();
+
+                if (employee1.equals(employee)) {
+                    return shiftType;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        List<String> out = new ArrayList<String>();
+        out.add(DateTimeHelper.getInstance().getDateString(date) + ", "
+            + String.format("%9s", DateTimeHelper.getInstance().getDayByDate(date)));
+
+        for (Map<ShiftType, Employee> map: roster) {
+            for (Map.Entry<ShiftType, Employee> entry: map.entrySet()) {
+                ShiftType shiftType = entry.getKey();
+                Employee employee = entry.getValue();
+
+                out.add("(Shift type: " + shiftType.getId() + ", Employee: "
+                        + employee.getName() + " " + employee.getSkills() + ")");
+            }
+        }
+
+        return out.toString();
     }
 }

@@ -65,14 +65,6 @@ public class SchedulingPeriod {
     }
 
     /**
-     * Returns the source file path.
-     * @return Source file path.
-     */
-    public String getSourceFile() {
-        return sourceFile;
-    }
-
-    /**
      * Returns a contract by its identifier.
      * @param id Contract identifier.
      * @return Contract instance or null.
@@ -147,7 +139,7 @@ public class SchedulingPeriod {
      * @param day Day instance
      * @return Map instance or null.
      */
-    public Map<ShiftType, Integer> getCoversByDay(Day day) {
+    private Map<ShiftType, Integer> getCoversByDay(Day day) {
         for (Cover cover: dayCovers) {
             if (cover.getDay().equals(day)) {
                 return cover.getCovers();
@@ -202,14 +194,6 @@ public class SchedulingPeriod {
         this.skills = skills;
     }
 
-    public List<ShiftType> getShiftTypes() {
-        return shiftTypes;
-    }
-
-    public void setShiftTypes(List<ShiftType> shiftTypes) {
-        this.shiftTypes = shiftTypes;
-    }
-
     public List<Contract> getContracts() {
         return contracts;
     }
@@ -224,10 +208,6 @@ public class SchedulingPeriod {
 
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
-    }
-
-    public List<Cover> getDayCovers() {
-        return dayCovers;
     }
 
     public void setDayCovers(List<Cover> dayCovers) {

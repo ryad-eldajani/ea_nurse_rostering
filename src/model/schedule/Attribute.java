@@ -29,7 +29,7 @@ public class Attribute {
      * @param name Attribute name.
      */
     public void setName(String name) {
-        this.name = Character.toLowerCase(name.charAt(0)) + name.substring(1);;
+        this.name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
     }
 
     /**

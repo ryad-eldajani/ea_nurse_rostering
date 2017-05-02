@@ -1,6 +1,5 @@
 package writer;
 
-import helper.ArrayHelper;
 import helper.ConfigurationHelper;
 import helper.DateTimeHelper;
 import helper.FilesystemHelper;
@@ -16,6 +15,7 @@ import java.util.Map;
 /**
  * Class to write an XML solution file.
  */
+@SuppressWarnings("unused")
 public class XmlWriter implements IWriter {
     /**
      * Returns the solution as a XOM Document instance.

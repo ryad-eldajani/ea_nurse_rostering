@@ -1,5 +1,6 @@
 package helper;
 
+import model.schedule.Contract;
 import model.schedule.Day;
 import model.schedule.SchedulingPeriod;
 
@@ -62,7 +63,7 @@ public class DateTimeHelper {
      * @param endDate Date instance
      * @return Number of days between start and end date
      */
-    public int getNumberOfDays(Date startDate, Date endDate) {
+    private int getNumberOfDays(Date startDate, Date endDate) {
         long daysDifference = endDate.getTime() - startDate.getTime();
 
         // +1 as we include the last day
@@ -186,7 +187,7 @@ public class DateTimeHelper {
      * @param separator Separator
      * @return String in HH[separator]MM[separator]SS format.
      */
-    public String getTimeString(Date date, String separator) {
+    private String getTimeString(Date date, String separator) {
         Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
         calendar.setTime(date);   // assigns calendar to given date
         return String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY))
@@ -205,19 +206,10 @@ public class DateTimeHelper {
 
     /**
      * Returns the current time in HH[separator]MM[separator]SS format.
-     * @param separator Separator
      * @return String in HH[separator]MM[separator]SS format.
      */
-    public String getTimeString(String separator) {
-        return getTimeString(new Date(), separator);
-    }
-
-    /**
-     * Returns the current time in HH:MM:SS format.
-     * @return String in HH:MM:SS format.
-     */
-    public String getTimeString() {
-        return getTimeString(new Date());
+    String getTimeString() {
+        return getTimeString(new Date(), "_");
     }
 
     /**
@@ -235,7 +227,7 @@ public class DateTimeHelper {
      * @param separator Separator
      * @return String in DD[separator]MM[separator]YYYY format.
      */
-    public String getDateString(Date date, String separator) {
+    private String getDateString(Date date, String separator) {
         Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
         calendar.setTime(date);   // assigns calendar to given date
         return String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH))
@@ -250,15 +242,6 @@ public class DateTimeHelper {
      */
     public String getDateString(Date date) {
         return getDateString(date, ".");
-    }
-
-    /**
-     * Returns the current date in DD[separator]MM[separator]YYYY format.
-     * @param separator Separator
-     * @return String in DD[separator]MM[separator]YYYY format.
-     */
-    public String getDateString(String separator) {
-        return getDateString(new Date(), separator);
     }
 
     /**
@@ -278,55 +261,19 @@ public class DateTimeHelper {
      * @param separator Separator
      * @return String in YYYY[separator]MM[separator]DD format
      */
-    public String getDateStringReversed(String separator) {
+    String getDateStringReversed(String separator) {
         return ArrayHelper.getInstance().getString(
                 ArrayHelper.getInstance().reverse(
                         getDateString(new Date()).split("\\.")), separator);
     }
 
     /**
-     * Returns the current date in DD.MM.YYYY format.
-     * @return String in DD.MM.YYYY format.
-     */
-    public String getDateString() {
-        return getDateString(new Date());
-    }
-
-    /**
-     * Returns a list of Date instances between startDate and endDate
-     * @param startDate Date instance
-     * @param endDate Date instance
-     * @return List of Date instances
-     */
-    public List<Date> getListOfDates(Date startDate, Date endDate) {
-        Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
-        calendar.setTime(startDate);
-
-        List<Date> dates = new ArrayList<Date>();
-        for (int i = 0; i < getNumberOfDays(startDate, endDate); i++) {
-            dates.add(calendar.getTime());
-            calendar.add(Calendar.DATE, 1);
-        }
-
-        return dates;
-    }
-
-    /**
-     * Returns a list of Date instances between startDate and endDate
-     * @param period SchedulingPeriod instance
-     * @return List of Date instances
-     */
-    public List<Date> getListOfDates(SchedulingPeriod period) {
-        return getListOfDates(period.getStartDate(), period.getEndDate());
-    }
-
-    /**
      * Returns true, if the day of the Date instance is a weekend day.
      * @param date Date instance
+     * @param contract Contract instance (as this decides the weekend definition)
      * @return True, if weekend day
      */
-    public boolean isWeekend(Date date) {
-        Day day = getDayByDate(date);
-        return day == Day.SATURDAY || day == Day.SUNDAY;
+    public boolean isWeekend(Date date, Contract contract) {
+        return contract.getWeekendDefinition().contains(getDayByDate(date));
     }
 }
