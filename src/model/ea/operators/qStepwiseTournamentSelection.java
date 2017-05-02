@@ -9,8 +9,6 @@ import model.ea.Individual;
 import model.ea.Population;
 
 
-
-@SuppressWarnings("unused")
 public class qStepwiseTournamentSelection implements IEnvironmentSelectionOperator {
     private int numberOfDirectDuels = ConfigurationHelper.getInstance().getPropertyInteger("NumberOfDirectDuels", 3);
     private int numberOfSelections = ConfigurationHelper.getInstance().getPropertyInteger("IndividualsPerPopulation", 10);
@@ -31,7 +29,7 @@ public class qStepwiseTournamentSelection implements IEnvironmentSelectionOperat
             for (int j = 0; j < numberOfDirectDuels; j++) {
                 int enemy = j;
                 while (enemy == j) {
-                    enemy = new Random().nextInt(currentPopulation.getPool().size()) + 1; // the enemy is selected randomly from the population
+                    enemy = new Random().nextInt(currentPopulation.getPool().size()); // the enemy is selected randomly from the population
                 }
 
                 if (currentPopulation.getPool().get(i).getFitness() > currentPopulation.getPool().get(enemy).getFitness()) {
@@ -48,7 +46,6 @@ public class qStepwiseTournamentSelection implements IEnvironmentSelectionOperat
 
         currentPopulation.getPool().removeAll(toRemove);
     }
-
 
 
     /**
