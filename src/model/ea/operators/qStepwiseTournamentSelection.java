@@ -66,4 +66,3 @@ public class qStepwiseTournamentSelection implements IEnvironmentSelectionOperat
         return index;
     }
 }
-
