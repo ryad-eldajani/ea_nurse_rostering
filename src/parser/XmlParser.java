@@ -10,6 +10,7 @@ import nu.xom.*;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -79,15 +80,17 @@ public class XmlParser implements IParser {
      * @param unwantedPatterns UnwantedPatterns node.
      * @param contract Contract instance.
      */
-    private void parseUnwantedPatterns(Element unwantedPatterns, Contract contract) {
-        List<Integer> unwantedPatternsList = new ArrayList<Integer>();
+    private void parseUnwantedPatterns(Element unwantedPatterns, SchedulingPeriod period, Contract contract) {
+        List<Pattern> unwantedPatternsList = new LinkedList<Pattern>();
 
         for (int i = 0; i < unwantedPatterns.getChildCount(); i++) {
             Node patternNode = unwantedPatterns.getChild(i);
             if (patternNode instanceof Element) {
                 Element element = (Element) patternNode;
                 if (element.getLocalName().equals("Pattern")) {
-                    unwantedPatternsList.add(Integer.valueOf(element.getValue()));
+                    unwantedPatternsList.add(
+                            period.getPatternById(
+                                    Integer.valueOf(element.getValue())));
                 }
             }
         }
@@ -176,7 +179,7 @@ public class XmlParser implements IParser {
                         } else if (contractInfo.getLocalName().equals("Description")) {
                             contract.setDescription(contractInfo.getValue());
                         } else if (contractInfo.getLocalName().equals("UnwantedPatterns")) {
-                            parseUnwantedPatterns(contractInfo, contract);
+                            parseUnwantedPatterns(contractInfo, period, contract);
                         } else if (contractInfo.getLocalName().equals("WeekendDefinition")) {
                             contract.setWeekendDefinition(
                                     DateTimeHelper.getInstance().getDayListFromString(contractInfo.getValue()));

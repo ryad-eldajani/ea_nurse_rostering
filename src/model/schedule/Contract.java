@@ -2,6 +2,7 @@ package model.schedule;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class Contract {
     private Attribute identicalShiftTypesDuringWeekend;
     private Attribute noNightShiftBeforeFreeWeekend;
     private Attribute alternativeSkillCategory;
-    private List<Integer> unwantedPatterns = new ArrayList<Integer>();
+    private List<Pattern> unwantedPatterns = new LinkedList<Pattern>();
 
     /**
      * Returns a weighted attribute by name.
@@ -64,10 +65,6 @@ public class Contract {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public void setUnwantedPatterns(List<Integer> unwantedPatterns) {
-        this.unwantedPatterns = unwantedPatterns;
     }
 
     public void setWeekendDefinition(List<Day> weekendDefinition) {
@@ -142,8 +139,12 @@ public class Contract {
         return alternativeSkillCategory;
     }
 
-    public List<Integer> getUnwantedPatterns() {
+    public List<Pattern> getUnwantedPatterns() {
         return unwantedPatterns;
+    }
+
+    public void setUnwantedPatterns(List<Pattern> unwantedPatterns) {
+        this.unwantedPatterns = unwantedPatterns;
     }
 
     @Override

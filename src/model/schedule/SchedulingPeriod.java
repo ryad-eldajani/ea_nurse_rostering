@@ -224,6 +224,21 @@ public class SchedulingPeriod {
         patterns.put(pattern.getId(), pattern);
     }
 
+    /**
+     * Returns a Pattern by given patternId if available, otherwise null
+     * @param patternId Pattern identifier
+     * @return Pattern instance by given patternId if available, otherwise null
+     */
+    public Pattern getPatternById(int patternId) {
+        for (Map.Entry<Integer, Pattern> entry: patterns.entrySet()) {
+            if (entry.getKey() == patternId) {
+                return entry.getValue();
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         String nl = System.getProperty("line.separator");
