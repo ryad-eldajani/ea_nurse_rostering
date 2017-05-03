@@ -96,6 +96,54 @@ public class XmlParser implements IParser {
     }
 
     /**
+     * Parses Patterns node.
+     * @param patterns Patterns node.
+     * @param period SchedulingPeriod instance.
+     */
+    private void parsePatterns(Element patterns, SchedulingPeriod period) throws ParseException, NoSuchFieldException, IllegalAccessException {
+        for (int i = 0; i < patterns.getChildCount(); i++) {
+            Node patternNode = patterns.getChild(i);
+            if (patternNode instanceof Element && ((Element) patternNode).getLocalName().equals("Pattern")) {
+                Element element = (Element) patternNode;
+                Pattern pattern = new Pattern();
+                pattern.setId(Integer.parseInt(element.getAttributeValue("ID")));
+                pattern.setWeight(Integer.parseInt(element.getAttributeValue("weight")));
+                for (int j = 0; j < patternNode.getChildCount(); j++) {
+                    if (element.getChild(j) instanceof Element) {
+                        Element patternEntries = (Element) element.getChild(j);
+                        for (int k = 0; k < patternEntries.getChildCount(); k++) {
+                            if (patternEntries.getChild(k) instanceof Element) {
+                                Element patternEntryInfo = (Element) patternEntries.getChild(k);
+                                PatternEntry patternEntry = new PatternEntry();
+                                patternEntry.setId(Integer.parseInt(patternEntryInfo.getAttributeValue("index")));
+                                String shiftTypeValue = patternEntryInfo.getChildElements("ShiftType").get(0).getValue();
+                                String dayValue = patternEntryInfo.getChildElements("Day").get(0).getValue();
+
+                                if (shiftTypeValue.equals("None")) {
+                                    patternEntry.setShiftTypeNone(true);
+                                } else if (shiftTypeValue.equals("Any")) {
+                                    patternEntry.setShiftTypeAny(true);
+                                } else {
+                                    patternEntry.setShiftType(period.getShiftTypeById(shiftTypeValue));
+                                }
+
+                                if (dayValue.equals("Any")) {
+                                    patternEntry.setDayAny(true);
+                                } else {
+                                    patternEntry.setDay(DateTimeHelper.getInstance().getDayByName(dayValue));
+                                }
+
+                                pattern.addPatternEntry(patternEntry);
+                            }
+                        }
+                        period.addPattern(pattern);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Parses Contracts node.
      * @param contracts Contracts node.
      * @param period SchedulingPeriod instance.
@@ -292,6 +340,8 @@ public class XmlParser implements IParser {
                     period.setSkills(parseSkills(element));
                 } else if (element.getLocalName().equals("ShiftTypes")) {
                     parseShifts(element, period);
+                } else if (element.getLocalName().equals("Patterns")) {
+                    parsePatterns(element, period);
                 } else if (element.getLocalName().equals("Contracts")) {
                     parseContracts(element, period);
                 } else if (element.getLocalName().equals("Employees")) {

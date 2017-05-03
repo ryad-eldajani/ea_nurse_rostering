@@ -2,10 +2,7 @@ package model.schedule;
 
 import helper.DateTimeHelper;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Scheduling period model.
@@ -55,6 +52,11 @@ public class SchedulingPeriod {
      * List of required coverings for each days.
      */
     private List<Cover> dayCovers = new ArrayList<Cover>();
+
+    /**
+     * Map of identifier -> pattern.
+     */
+    private Map<Integer, Pattern> patterns = new LinkedHashMap<Integer, Pattern>();
 
     /**
      * Sets the source file path.
@@ -212,6 +214,14 @@ public class SchedulingPeriod {
 
     public void setDayCovers(List<Cover> dayCovers) {
         this.dayCovers = dayCovers;
+    }
+
+    /**
+     * Adds a Pattern instance.
+     * @param pattern Pattern instance
+     */
+    public void addPattern(Pattern pattern) {
+        patterns.put(pattern.getId(), pattern);
     }
 
     @Override

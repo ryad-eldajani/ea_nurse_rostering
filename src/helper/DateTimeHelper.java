@@ -120,9 +120,8 @@ public class DateTimeHelper {
      * Returns a Day value by its string equivalent.
      * @param dayName Day name to convert.
      * @return Day value.
-     * @throws ParseException If not a valid day name.
      */
-    public Day getDayByName(String dayName) throws ParseException {
+    public Day getDayByName(String dayName) {
         if (dayName.trim().toLowerCase().equals("monday")) {
             return Day.MONDAY;
         } else if (dayName.trim().toLowerCase().equals("tuesday")) {
@@ -135,11 +134,10 @@ public class DateTimeHelper {
             return Day.FRIDAY;
         } else if (dayName.trim().toLowerCase().equals("saturday")) {
             return Day.SATURDAY;
-        } else if (dayName.trim().toLowerCase().equals("sunday")) {
-            return Day.SUNDAY;
         }
 
-        throw new ParseException("Not a valid day name.", 0);
+        // no other day is found, it's a sunday
+        return Day.SUNDAY;
     }
 
     /**

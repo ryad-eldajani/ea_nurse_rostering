@@ -41,7 +41,7 @@ public class Start {
         SchedulingPeriod period = getInstance().parseSchedulingPeriod();
 
         // create and run the evolutionary cycle
-        EvolutionaryCycle evolutionaryCycle = (new EvolutionaryCycle());
+        EvolutionaryCycle evolutionaryCycle = new EvolutionaryCycle();
         Population evolutionizedPopulation = evolutionaryCycle.evolutionize(period);
 
         // retrieve best individual from initialized and evolutionized populations
