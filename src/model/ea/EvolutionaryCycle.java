@@ -84,22 +84,22 @@ public class EvolutionaryCycle {
             Population oldPopulation = Population.copy(newPopulation);
 
             // get selection of mating individuals
-            List<Individual> newIndividuals = matingSelectionOperator.select(oldPopulation);
+            List<Individual> parents = matingSelectionOperator.select(oldPopulation);
 
             // recombine individuals (if used)
             if (useRecombination) {
-                recombinationOperator.recombine(newIndividuals);
+                oldPopulation.addIndividualsToPool(recombinationOperator.recombine(parents));
             }
 
             // mutate individuals (if used)
             if (useMutation) {
-                mutationOperator.mutate(newIndividuals);
+               oldPopulation.addIndividualsToPool(mutationOperator.mutate(parents)); 
             }
 
             // Replace new population by old population and add
             // new individuals to the new generation.
-            newPopulation = oldPopulation;
-            newPopulation.addIndividualsToPool(newIndividuals);
+            //newPopulation = oldPopulation;
+            //newPopulation.addIndividualsToPool(newIndividuals);
 
             // benchmark new generation
             newPopulation.benchmark();

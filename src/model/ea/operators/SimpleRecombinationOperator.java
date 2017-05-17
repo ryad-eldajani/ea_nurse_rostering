@@ -9,8 +9,9 @@ import java.util.List;
  */
 public class SimpleRecombinationOperator implements IRecombinationOperator {
     @Override
-    public void recombine(List<Individual> individuals) {
+    public List<Individual> recombine(List<Individual> individuals) {
         // TODO: Implement recombination
         Object nothing = null;
+		return null;
     }
 }

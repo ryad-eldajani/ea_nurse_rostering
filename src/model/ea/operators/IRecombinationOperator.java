@@ -11,5 +11,5 @@ public interface IRecombinationOperator {
     /**
      * Recombines individuals.
      */
-    void recombine(List<Individual> individuals);
+    public List<Individual> recombine(List<Individual> individuals);
 }

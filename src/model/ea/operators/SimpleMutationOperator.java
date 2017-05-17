@@ -9,10 +9,11 @@ import java.util.List;
  */
 public class SimpleMutationOperator implements IMutationOperator {
     @Override
-    public void mutate(List<Individual> individuals) {
+    public List<Individual> mutate(List<Individual> individuals) {
         for (Individual individual: individuals) {
             // TODO: Implement mutation
             Object nothing = null;
         }
+		return null;
     }
 }

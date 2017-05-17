@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface IMutationOperator {
     /**
-     * Mutates individuals.
+     * Mutates selected individuals.
      */
-    void mutate(List<Individual> individuals);
+    public List <Individual> mutate(List<Individual> selection);
 }
