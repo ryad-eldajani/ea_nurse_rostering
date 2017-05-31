@@ -54,6 +54,14 @@ public class DayRoster {
     }
 
     /**
+     * Returns the day by date.
+     * @return Day instance
+     */
+    public Day getDay() {
+        return DateTimeHelper.getInstance().getDayByDate(date);
+    }
+
+    /**
      * Sets the date.
      * @param date Date instance
      */

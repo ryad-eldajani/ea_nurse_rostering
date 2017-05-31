@@ -111,6 +111,11 @@ public class Individual {
     private Map<Employee, Boolean> noNightShiftsBeforeWeekends = new HashMap<Employee, Boolean>();
 
     /**
+     * Cache for unwanted patterns deviation per employee.
+     */
+    private Map<Employee, Float> unwantedPatternsDeviations = new HashMap<Employee, Float>();
+
+    /**
      * Returns the List of DayRoster instances.
      * @return List of DayRoster instances
      */
@@ -338,6 +343,17 @@ public class Individual {
         return getDayInformation(employee, map);
     }
 
+    private float getUnwantedPatternInformation(Employee employee) {
+        if (unwantedPatternsDeviations.containsKey(employee)) {
+            return unwantedPatternsDeviations.get(employee);
+        }
+
+        // we have no deviation information, calculate and add
+        unwantedPatternsDeviations.put(employee, calculateUnwantedPatternsDeviation(employee));
+
+        return getUnwantedPatternInformation(employee);
+    }
+
     /**
      * Returns the minimum number of consecutive working days per employee.
      * @param employee Employee instance
@@ -372,6 +388,59 @@ public class Individual {
      */
     public int getNumMaxConsecutiveFree(Employee employee) {
         return getDayInformation(employee, numConsecutiveMaxFree);
+    }
+
+    /**
+     * Calculates the unwanted pattern information per employee
+     * @param employee Employee instance
+     */
+    private float calculateUnwantedPatternsDeviation(Employee employee) {
+        float deviation = 0;
+
+        // calculate for every unwanted pattern per employee
+        for (Pattern pattern: employee.getContract().getUnwantedPatterns()) {
+            Boolean satisfied = true;
+            //PatternEntry[] patternEntries = (PatternEntry[]) pattern.getEntries().values().toArray();
+            List<PatternEntry> patternEntries = new ArrayList<PatternEntry>(pattern.getEntries().values());
+            int peIndex = 0; // pattern entry index
+
+            // check for each day
+            for (Map.Entry<DayRoster, Boolean> dayRosterEntry: getAssignments(employee).entrySet()) {
+                DayRoster dayRoster = dayRosterEntry.getKey();
+                Boolean working = dayRosterEntry.getValue();
+                PatternEntry patternEntry = patternEntries.get(peIndex);
+
+                // if current day matches pattern entry day or is any day
+                if (patternEntry.isDayAny()
+                        || patternEntry.getDay().equals(dayRoster.getDay())) {
+
+                    // If
+                    //  shift type of employee matches pattern entry shift type
+                    //  or is any shift type
+                    //  or employee is working and should not have a shift assigned
+                    ShiftType shiftType = dayRoster.getShiftTypeForEmployee(employee);
+                    if ((working && patternEntry.isShiftTypeNone())
+                            || patternEntry.isShiftTypeAny()
+                            || (shiftType != null && patternEntry.getShiftType().equals(shiftType))) {
+
+                        // Increase peIndex to check next pattern element.
+                        // If all pattern elements matched, this unwanted pattern soft-constraint
+                        // is unsatisfied.
+                        if (++peIndex >= patternEntries.size()) {
+                            satisfied = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // if unwanted pattern is unsatisfied, add deviation
+            if (!satisfied) {
+                deviation += pattern.getWeight();
+            }
+        }
+
+        return deviation;
     }
 
     /**
@@ -497,6 +566,10 @@ public class Individual {
      */
     public boolean isCompleteWeekends(Employee employee) {
         return (Boolean) getWeekendInformation(employee, completeWeekends);
+    }
+
+    public float getUnwantedPatternDeviation(Employee employee) {
+        return getUnwantedPatternInformation(employee);
     }
 
     /**

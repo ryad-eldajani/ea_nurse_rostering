@@ -31,6 +31,7 @@ public class DefaultFitnessCalculator implements IFitnessCalculator {
         fitness += getDeviationNumAssignments();
         fitness += getDeviationNumConsecutiveDays();
         fitness += getDeviationWorkingWeekends();
+        fitness += getDeviationUnwantedPatterns();
 
         return fitness;
     }
@@ -97,13 +98,13 @@ public class DefaultFitnessCalculator implements IFitnessCalculator {
             if (numMinConsecutiveWork < valueMinWork) {
                 deviation += (valueMinWork - numMinConsecutiveWork) * weightMinWork;
             }
-            if (numMaxConsecutiveWork > valueMinWork) {
+            if (numMaxConsecutiveWork > valueMaxWork) {
                 deviation += (numMaxConsecutiveWork - valueMaxWork) * weightMaxWork;
             }
             if (numMinConsecutiveFree < valueMinFree) {
                 deviation += (valueMinFree - numMinConsecutiveFree) * weightMinFree;
             }
-            if (numMaxConsecutiveFree > valueMinFree) {
+            if (numMaxConsecutiveFree > valueMaxFree) {
                 deviation += (numMaxConsecutiveFree - valueMaxFree) * weightMaxFree;
             }
         }
@@ -120,21 +121,21 @@ public class DefaultFitnessCalculator implements IFitnessCalculator {
 
         // calculate for each employee
         for (Employee employee: period.getEmployees()) {
-            Attribute totalNumWorkWeekends = employee.getContract().getMaxWorkingWeekendsInFourWeeks(),
+            Attribute maxWorkingWeekendsTotal = employee.getContract().getMaxWorkingWeekendsInFourWeeks(),
                     minNumConsecutiveWorkWeekends = employee.getContract().getMinConsecutiveWorkingWeekends(),
                     maxNumConsecutiveWorkWeekends = employee.getContract().getMaxConsecutiveWorkingWeekends(),
                     completeWeekends = employee.getContract().getCompleteWeekends(),
                     identicalShiftTypes = employee.getContract().getIdenticalShiftTypesDuringWeekend(),
                     noNightShiftsBeforeWeekends = employee.getContract().getNoNightShiftBeforeFreeWeekend();
 
-            int weightTotalWork = totalNumWorkWeekends.getWeight(),
+            int weightMaxWorkingWeekendsTotal = maxWorkingWeekendsTotal.getWeight(),
                     weightMinConsecutiveWork = minNumConsecutiveWorkWeekends.getWeight(),
                     weightMaxConsecutiveWork = maxNumConsecutiveWorkWeekends.getWeight(),
                     weightCompleteWeekends = completeWeekends.getWeight(),
                     weightIdenticalShiftTypes = identicalShiftTypes.getWeight(),
                     weightNoNightShiftsBeforeWeekends = noNightShiftsBeforeWeekends.getWeight();
 
-            int valueMinTotal = totalNumWorkWeekends.getValueInt(),
+            int valueMaxWorkingWeekendsTotal = maxWorkingWeekendsTotal.getValueInt(),
                     valueMinConsecutiveWork = minNumConsecutiveWorkWeekends.getValueInt(),
                     valueMaxConsecutiveWork = maxNumConsecutiveWorkWeekends.getValueInt();
 
@@ -142,16 +143,13 @@ public class DefaultFitnessCalculator implements IFitnessCalculator {
                     valueIdenticalShiftTypes = identicalShiftTypes.getValueBoolean(),
                     valueNoNightShiftsBeforeWeekends = noNightShiftsBeforeWeekends.getValueBoolean();
 
-            int numTotalWeekendsWork = individual.getNumTotalWeekendsWork(employee),
+            int numWeekendsWorkTotal = individual.getNumTotalWeekendsWork(employee),
                     numMinConsecutiveWeekendsWork = individual.getNumMinConsecutiveWeekendsWork(employee),
                     numMaxConsecutiveWeekendsWork = individual.getNumMaxConsecutiveWeekendsWork(employee);
 
             // if soft-constraints are unsatisfied, add deviation
-            if (numTotalWeekendsWork < valueMinTotal) {
-                deviation += (valueMinTotal - numTotalWeekendsWork) * weightTotalWork;
-            }
-            if (numTotalWeekendsWork > valueMinTotal) {
-                deviation += (numTotalWeekendsWork - valueMinTotal) * weightTotalWork;
+            if (numWeekendsWorkTotal > valueMaxWorkingWeekendsTotal) {
+                deviation += (numWeekendsWorkTotal - valueMaxWorkingWeekendsTotal) * weightMaxWorkingWeekendsTotal;
             }
             if (numMinConsecutiveWeekendsWork < valueMinConsecutiveWork) {
                 deviation += (valueMinConsecutiveWork - numMinConsecutiveWeekendsWork) * weightMinConsecutiveWork;
@@ -168,6 +166,21 @@ public class DefaultFitnessCalculator implements IFitnessCalculator {
             if (valueNoNightShiftsBeforeWeekends != individual.isNoNightShiftsBeforeFreeWeekend(employee)) {
                 deviation += weightNoNightShiftsBeforeWeekends;
             }
+        }
+
+        return deviation;
+    }
+
+    /**
+     * Calculates the deviations for unwanted patterns  for each employee.
+     * @return Deviation
+     */
+    private float getDeviationUnwantedPatterns() {
+        float deviation = 0;
+
+        // calculate deviation for each employee
+        for (Employee employee: period.getEmployees()) {
+            deviation += individual.getUnwantedPatternDeviation(employee);
         }
 
         return deviation;
