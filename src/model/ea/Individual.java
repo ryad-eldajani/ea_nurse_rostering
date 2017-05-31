@@ -430,7 +430,11 @@ public class Individual {
                             satisfied = false;
                             break;
                         }
+                    } else {
+                        peIndex = 0; // reset peIndex, as unwanted pattern is not complete
                     }
+                } else {
+                    peIndex = 0; // reset peIndex, as unwanted pattern is not complete
                 }
             }
 
