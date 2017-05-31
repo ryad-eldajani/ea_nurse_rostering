@@ -343,6 +343,11 @@ public class Individual {
         return getDayInformation(employee, map);
     }
 
+    /**
+     * Returns the deviation for unsatisfied unwanted patterns per employee.
+     * @param employee Employee instance.
+     * @return Float of deviation for unwanted patterns per employee
+     */
     private float getUnwantedPatternInformation(Employee employee) {
         if (unwantedPatternsDeviations.containsKey(employee)) {
             return unwantedPatternsDeviations.get(employee);
@@ -351,6 +356,7 @@ public class Individual {
         // we have no deviation information, calculate and add
         unwantedPatternsDeviations.put(employee, calculateUnwantedPatternsDeviation(employee));
 
+        // re-run this method to return the calculated values
         return getUnwantedPatternInformation(employee);
     }
 
@@ -572,6 +578,11 @@ public class Individual {
         return (Boolean) getWeekendInformation(employee, completeWeekends);
     }
 
+    /**
+     * Returns the deviation for unsatisfied unwanted patterns per employee.
+     * @param employee Employee instance
+     * @return Float of deviation for unsatisfied unwanted patterns per employee
+     */
     public float getUnwantedPatternDeviation(Employee employee) {
         return getUnwantedPatternInformation(employee);
     }
