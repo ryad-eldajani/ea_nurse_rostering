@@ -2,9 +2,7 @@ package model.schedule;
 
 import helper.DateTimeHelper;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Covering model.
@@ -18,7 +16,7 @@ public class Cover {
     /**
      * Covering information (shift type -> number of employees preferred).
      */
-    private Map<ShiftType, Integer> covers = new HashMap<ShiftType, Integer>();
+    private Map<ShiftType, Integer> covers = new LinkedHashMap<ShiftType, Integer>();
 
     /**
      * Returns the day.
@@ -80,5 +78,30 @@ public class Cover {
         }
 
         return null;
+    }
+
+    /**
+     * Prioritizes the day head nurse shift if available.
+     */
+    public void prioritizeDayHeadNurseShift() {
+        boolean hasDhShift = false;
+        Set<ShiftType> shiftTypesOrder = new HashSet<ShiftType>();
+
+        // check, if we have a DH shift
+        for (Map.Entry<ShiftType, Integer> cover: covers.entrySet()) {
+            ShiftType shiftType = cover.getKey();
+            if (shiftType.isDayHeadNurse()) {
+                hasDhShift = true;
+                shiftTypesOrder.add(shiftType);
+                break;
+            }
+        }
+
+        // if we have a DH shift, filter to DH and then add remaining elements
+        if (hasDhShift) {
+            Map<ShiftType, Integer> copy = new LinkedHashMap<ShiftType, Integer>(covers);
+            covers.keySet().retainAll(shiftTypesOrder);
+            covers.putAll(copy);
+        }
     }
 }

@@ -7,13 +7,11 @@ import java.util.List;
 /**
  * Implements a simple mutation operator.
  */
+@SuppressWarnings("unused")
 public class SimpleMutationOperator implements IMutationOperator {
     @Override
     public List<Individual> mutate(List<Individual> individuals) {
-        for (Individual individual: individuals) {
-            // TODO: Implement mutation
-            Object nothing = null;
-        }
-		return null;
+        // TODO: Implement mutation
+        return individuals;
     }
 }

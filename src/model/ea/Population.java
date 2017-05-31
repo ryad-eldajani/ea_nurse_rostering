@@ -14,7 +14,7 @@ public class Population {
     /**
      * The overall fitness value of this population
      */
-    private Double overallFitness = null;
+    private double overallFitness = 0;
 
     /**
      * Last global identifier.
@@ -50,6 +50,10 @@ public class Population {
         for (Individual individual: population.pool) {
             copyInstance.pool.add(Individual.copy(individual));
         }
+
+        // copy overall fitness, if we have a specific value
+        copyInstance.overallFitness = population.overallFitness;
+
         return copyInstance;
     }
 
@@ -67,7 +71,7 @@ public class Population {
      */
     public double getOverallFitness() {
         // if overall fitness value is not calculated, benchmark this population now
-        if (overallFitness == null) {
+        if (overallFitness == 0) {
             benchmark();
         }
 
@@ -104,7 +108,7 @@ public class Population {
      * Calculates the fitness of every individual.
      */
     void benchmark() {
-        overallFitness = 0d;
+        overallFitness = 0;
         for (Individual individual: pool) {
             overallFitness += individual.getFitness();
         }

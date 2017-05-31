@@ -212,6 +212,14 @@ public class SchedulingPeriod {
         this.employees = employees;
     }
 
+    /**
+     * Returns the day covers list.
+     * @return List of Cover instances
+     */
+    public List<Cover> getDayCovers() {
+        return dayCovers;
+    }
+
     public void setDayCovers(List<Cover> dayCovers) {
         this.dayCovers = dayCovers;
     }

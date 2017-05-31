@@ -76,6 +76,14 @@ public class ShiftType {
         return id.equals("N");
     }
 
+    /**
+     * Returns true, if this is a day head nurse shift type.
+     * @return True, if day head nurse shift type
+     */
+    public boolean isDayHeadNurse() {
+        return id.equals("DH");
+    }
+
     /***
      * Following getters and setters are trivial and self explanatory, therefore not documented further.
      ***/

@@ -325,6 +325,16 @@ public class XmlParser implements IParser {
     }
 
     /**
+     * Prioritizes day head nurse shifts.
+     * @param period SchedulingPeriod instance
+     */
+    private void prioritizeDayHeadNurseShifts(SchedulingPeriod period) {
+        for (Cover cover: period.getDayCovers()) {
+            cover.prioritizeDayHeadNurseShift();
+        }
+    }
+
+    /**
      * Parses the whole period definition.
      * @param root Root element (SchedulingPeriod)
      * @return Compiled SchedulingPeriod instance
@@ -358,6 +368,12 @@ public class XmlParser implements IParser {
                 }
             }
         }
+
+        // If we have day head nurse shifts (DH), we need to prioritize
+        // these shifts to avoid assigning head nurses to normal
+        // shifts (randomly) and run out of head nurses for DH shifts.
+        prioritizeDayHeadNurseShifts(period);
+
         return period;
     }
 
