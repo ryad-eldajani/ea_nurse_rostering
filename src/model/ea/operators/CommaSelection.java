@@ -39,6 +39,7 @@ public class CommaSelection implements IEnvironmentSelectionOperator {
             }
         });
 		for (int i = 0; i < individualsPerPopulation; i++) {
+			if(children.isEmpty()){break;}
 			newGeneration.add(children.get(i));
 		}
 		population.getPool().clear();

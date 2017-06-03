@@ -21,13 +21,13 @@ public class SwappingNursesMutation implements IMutationOperator {
 	public List<Individual> mutate(List<Individual> selection) {
 		
 		int numberOfDays = selection.get(0).getDayRosters().size();
-		int randDay1 = new Random().nextInt(numberOfDays - 1); // random number between zero and the number of days in a schedule
-		int randDay2 = new Random().nextInt(numberOfDays - 1);
+		int randDay1 = new Random().nextInt(numberOfDays); // random number between zero and the number of days in a schedule
+		int randDay2 = new Random().nextInt(numberOfDays);
 		
 		for (int i = 0; i < selection.size(); i++) {
 			
 			int numberOfShifts = selection.get(i).getDayRosters().get(randDay1).getDayRoster().size();
-			int randShift = new Random().nextInt(numberOfShifts - 1); // random number between zero and the number of shifts in a day roster
+			int randShift = new Random().nextInt(numberOfShifts); // random number between zero and the number of shifts in a day roster
 			 
 			// the nurse of a random shift on a random day
 			Employee nurse1 = selection.get(i).getDayRosters().get(randDay1).getDayRoster().get(randShift).get(0);

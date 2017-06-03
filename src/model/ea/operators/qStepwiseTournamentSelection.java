@@ -32,7 +32,7 @@ public class qStepwiseTournamentSelection implements IEnvironmentSelectionOperat
                     enemy = new Random().nextInt(currentPopulation.getPool().size()); // the enemy is selected randomly from the population
                 }
 
-                if (currentPopulation.getPool().get(i).getFitness() > currentPopulation.getPool().get(enemy).getFitness()) {
+                if (currentPopulation.getPool().get(i).getFitness() < currentPopulation.getPool().get(enemy).getFitness()) {
                     // the individual gets a win if its fitness is better than the enemies
                     wins++;
                 }

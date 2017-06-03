@@ -12,34 +12,34 @@ import model.schedule.DayRoster;
 
 /**
  * takes the first two individuals from the list of parents
- * and swaps one randomly selected day roster
+ * and creates children with a half of each parent
  * @return a List of new created children
  */
-public class SingleDayRecombination implements IRecombinationOperator {
+public class SequentialRecombination implements IRecombinationOperator {
 
 	@Override
 	public List<Individual> recombine(List<Individual> parents) {
 		
-		List<Individual> children = new ArrayList<Individual>();
+        List<Individual> children = new ArrayList<Individual>();
 		
 		int numberOfDays = parents.get(0).getDayRosters().size();
+		int half = numberOfDays/2;
 		
 		Individual parent1 = parents.get(0);
 		Individual parent2 = parents.get(1);
 		
-		int r = new Random().nextInt(numberOfDays); // select a random number between zero and the number of days in the schedule
-		
-		DayRoster drParent1 = parent1.getDayRosters().get(r); // save the day rosters of day r of both parents
-		DayRoster drParent2 = parent2.getDayRosters().get(r);
-		
 		Individual child1 = new Individual();
 		child1 = parent1.copy(parent1);
-	    child1.getDayRosters().set(r, drParent2); // replace one property of this child with a property of parent2
-	    children.add(child1); // add the new created individual to the population
+		for (int i = half; i < numberOfDays; i++) {
+			child1.getDayRosters().set(i, parent2.getDayRosters().get(i)); 
+		}
+	    children.add(child1); 
 	    
 	    Individual child2 = new Individual();
 	    child2 = parent2.copy(parent2);
-	    child2.getDayRosters().set(r, drParent1);
+	    for (int i = half; i < numberOfDays; i++) {
+			child1.getDayRosters().set(i, parent1.getDayRosters().get(i)); 
+		}
 	    children.add(child2);
 		
 		return children;
