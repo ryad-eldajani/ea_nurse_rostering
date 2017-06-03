@@ -128,7 +128,7 @@ public class Individual {
      * hard constraints are satisfied.
      * @return True, if this individual is a feasible solution
      */
-    boolean isFeasible() {
+    public boolean isFeasible() {
         // check, if hard  constraints for each planned day are satisfied
         for (DayRoster dayRoster: roster) {
             Map<ShiftType, List<Employee>> plannedEmployees = new HashMap<ShiftType, List<Employee>>();
