@@ -88,12 +88,16 @@ public class EvolutionaryCycle {
 
             // recombine individuals (if used)
             if (useRecombination) {
-                oldPopulation.addIndividualsToPool(recombinationOperator.recombine(parents));
-            }
+                List <Individual> children = recombinationOperator.recombine(parents);
+             // mutate individuals (if used)
+                if (useMutation) {
+                   oldPopulation.addIndividualsToPool(mutationOperator.mutate(children)); 
+                }
 
-            // mutate individuals (if used)
-            if (useMutation) {
-               oldPopulation.addIndividualsToPool(mutationOperator.mutate(parents)); 
+         // mutate individuals (if used)
+            else if (useMutation) {
+            	oldPopulation.addIndividualsToPool(mutationOperator.mutate(parents));
+            	}
             }
 
             // Replace new population by old population and add
