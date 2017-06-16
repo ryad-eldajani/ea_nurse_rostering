@@ -178,15 +178,24 @@ public class Individual {
 
     /**
      * Returns the fitness value for this individual. The lower the value, the better.
+     * @param forceRecalculation If true, recalculation if forces even if there is a value already
      * @return Fitness value
      */
-    public float getFitness() {
+    public float getFitness(boolean forceRecalculation) {
         // if fitness value is not calculated, calculate now
-        if (fitness == null) {
+        if (fitness == null || forceRecalculation) {
             fitness = fitnessCalculator.calculate(this, period);
         }
 
         return fitness;
+    }
+
+    /**
+     * Returns the fitness value for this individual. The lower the value, the better.
+     * @return Fitness value
+     */
+    public float getFitness() {
+        return getFitness(false);
     }
 
     /**
@@ -603,6 +612,16 @@ public class Individual {
      */
     public boolean isNoNightShiftsBeforeFreeWeekend(Employee employee) {
         return (Boolean) getWeekendInformation(employee, noNightShiftsBeforeWeekends);
+    }
+
+    /**
+     * Resets the rosters.
+     */
+    public void resetRosters() {
+        int rosterSize = roster.size();
+        for (int i = rosterSize-1; i >= 0; i--) {
+            roster.remove(i);
+        }
     }
 
     @Override

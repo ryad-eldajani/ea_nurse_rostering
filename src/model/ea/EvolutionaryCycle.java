@@ -75,13 +75,14 @@ public class EvolutionaryCycle {
         initPopulation = generateInitializationPopulation(period);
         initPopulation.benchmark();
 
-        Population children = Population.copy(initPopulation);
+        Population population = Population.copy(initPopulation);
+        Population children;
 
         // evolutionize cycle, while termination condition is not met
         while (!isTerminationCondition()) {
             // get selection of mating individuals
-            Population parents = matingSelectionOperator.select(children);
-            children = Population.copy(parents);
+            Population parents = matingSelectionOperator.select(population);
+            children = new Population();
 
             // recombine individuals (if used)
             if (useRecombination) {
@@ -94,14 +95,15 @@ public class EvolutionaryCycle {
             }
 
             // benchmark new generation
-            children.benchmark();
+            population.addIndividualsToPool(children.getPool());
+            population.benchmark();
 
             // get environmental selection from new generation
-            environmentSelectionOperator.select(children);
+            environmentSelectionOperator.select(population);
         }
 
         // cycle is terminated, return the latest solution
-        return children;
+        return population;
     }
 
     /**
