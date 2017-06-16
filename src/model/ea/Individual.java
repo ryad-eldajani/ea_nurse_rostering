@@ -201,7 +201,7 @@ public class Individual {
      * Returns a deep copy of this instance.
      * @return Individual deep copy instance
      */
-    static Individual copy(Individual individual) {
+    public static Individual copy(Individual individual) {
         Individual copyInstance = new Individual();
         copyInstance.fitness = individual.fitness;
         copyInstance.period = individual.period;
