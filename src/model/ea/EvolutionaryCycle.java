@@ -9,8 +9,6 @@ import model.ea.operators.IMutationOperator;
 import model.ea.operators.IRecombinationOperator;
 import model.schedule.SchedulingPeriod;
 
-import java.util.List;
-
 /**
  * This class implements an evolutionary cycle for the evolutionary algorithm.
  */
@@ -77,43 +75,33 @@ public class EvolutionaryCycle {
         initPopulation = generateInitializationPopulation(period);
         initPopulation.benchmark();
 
-        Population newPopulation = Population.copy(initPopulation);
+        Population children = Population.copy(initPopulation);
 
         // evolutionize cycle, while termination condition is not met
         while (!isTerminationCondition()) {
-            Population oldPopulation = Population.copy(newPopulation);
-
             // get selection of mating individuals
-            List<Individual> parents = matingSelectionOperator.select(oldPopulation);
+            Population parents = matingSelectionOperator.select(Population.copy(children));
+            children = Population.copy(parents);
 
             // recombine individuals (if used)
             if (useRecombination) {
-                List <Individual> children = recombinationOperator.recombine(parents);
-             // mutate individuals (if used)
-                if (useMutation) {
-                   oldPopulation.addIndividualsToPool(mutationOperator.mutate(children)); 
-                }
-
-         // mutate individuals (if used)
-            else if (useMutation) {
-            	oldPopulation.addIndividualsToPool(mutationOperator.mutate(parents));
-            	}
+                 children = recombinationOperator.recombine(parents);
             }
 
-            // Replace new population by old population and add
-            // new individuals to the new generation.
-            //newPopulation = oldPopulation;
-            //newPopulation.addIndividualsToPool(newIndividuals);
+            // mutate individuals (if used)
+            if (useMutation) {
+            	children = mutationOperator.mutate(children);
+            }
 
             // benchmark new generation
-            newPopulation.benchmark();
+            children.benchmark();
 
             // get environmental selection from new generation
-            environmentSelectionOperator.select(newPopulation);
+            environmentSelectionOperator.select(children);
         }
 
         // cycle is terminated, return the latest solution
-        return newPopulation;
+        return children;
     }
 
     /**
@@ -135,11 +123,7 @@ public class EvolutionaryCycle {
 
         for (int i = 0; i < ConfigurationHelper.getInstance().getPropertyInteger("IndividualsPerPopulation", 10); i++) {
             Individual individual = ClassLoaderHelper.getInstance().getConstructionHeuristic().getIndividual(period);
-            try {
-                population.addIndividualToPool(individual);
-            } catch (IndividualNotFeasibleException e) {
-                e.printStackTrace();
-            }
+            population.addIndividualToPool(individual);
         }
 
         return population;

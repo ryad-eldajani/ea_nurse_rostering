@@ -610,7 +610,7 @@ public class Individual {
         String nl = System.getProperty("line.separator");
         StringBuilder out = new StringBuilder();
 
-        out.append("Individual ID: ").append(id).append(", fitness: ").append(fitness).append(", feasible: ").append(isFeasible()).append(nl);
+        out.append("ID: ").append(id).append(", fitness: ").append(fitness).append(", feasible: ").append(isFeasible()).append(nl);
 
         for (DayRoster dayRoster: roster) {
             out.append(dayRoster).append(nl);

@@ -110,10 +110,8 @@ public class TuiHelper {
      */
     public void showEAResult(Individual best, Individual bestInitialized) {
         showMemoryUsage();
-        System.out.println("Best initialized individual: " + bestInitialized.getId()
+        System.out.println("Best initial solution: " + bestInitialized.getId()
                 + ", fitness: " + bestInitialized.getFitness());
-        System.out.println("Best evolutionized individual: " + best.getId()
-                + ", fitness: " + best.getFitness());
-        System.out.println("Best solution: " + best);
+        System.out.println("Best evolutionized solution: " + best);
     }
 }

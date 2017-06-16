@@ -1,6 +1,6 @@
 package model.ea.operators;
 
-import model.ea.Individual;
+import model.ea.Population;
 
 import java.util.List;
 
@@ -11,5 +11,5 @@ public interface IRecombinationOperator {
     /**
      * Recombines individuals.
      */
-    public List<Individual> recombine(List<Individual> parents);
+    Population recombine(Population parents);
 }

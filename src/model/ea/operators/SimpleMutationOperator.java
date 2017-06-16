@@ -1,6 +1,7 @@
 package model.ea.operators;
 
 import model.ea.Individual;
+import model.ea.Population;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class SimpleMutationOperator implements IMutationOperator {
     @Override
-    public List<Individual> mutate(List<Individual> individuals) {
+    public Population mutate(Population individuals) {
         // TODO: Implement mutation
         return individuals;
     }

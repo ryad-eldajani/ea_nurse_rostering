@@ -37,14 +37,14 @@ public class Population {
     /**
      * Default constructor.
      */
-    Population() {}
+    public Population() {}
 
     /**
      * Returns a deep copy of this instance.
      * @param population Population instance to copy
      * @return Population instance as deep copy
      */
-    static Population copy(Population population) {
+    public static Population copy(Population population) {
         Population copyInstance = new Population();
         // deep copy old generation
         for (Individual individual: population.pool) {
@@ -81,13 +81,11 @@ public class Population {
     /**
      * Adds an Individual instance to the pool list.
      * @param individual Individual instance
-     * @throws IndividualNotFeasibleException Exception if individual is not feasible
      */
-    void addIndividualToPool(Individual individual) throws IndividualNotFeasibleException {
-        if (!individual.isFeasible()) {
-            throw new IndividualNotFeasibleException();
+    public void addIndividualToPool(Individual individual) {
+        if (individual.isFeasible()) {
+            pool.add(individual);
         }
-        pool.add(individual);
     }
 
     /**
@@ -96,11 +94,7 @@ public class Population {
      */
     void addIndividualsToPool(List<Individual> individuals) {
         for (Individual individual: individuals) {
-            try {
-                addIndividualToPool(individual);
-            } catch (IndividualNotFeasibleException e) {
-                System.out.println("Individual not feasible.");
-            }
+            addIndividualToPool(individual);
         }
     }
 
@@ -135,6 +129,6 @@ public class Population {
      * @return Best individual
      */
     public Individual getBestIndividual() {
-        return this.sortByFitness().pool.get(0);
+        return sortByFitness().pool.get(0);
     }
 }

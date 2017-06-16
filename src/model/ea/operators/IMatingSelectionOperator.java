@@ -12,5 +12,5 @@ public interface IMatingSelectionOperator {
     /**
      * Get a mating selection for a specific population.
      */
-    List<Individual> select(Population population);
+    Population select(Population population);
 }
