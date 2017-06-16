@@ -5,44 +5,38 @@ package model.ea.operators;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import model.ea.Individual;
-import model.schedule.DayRoster;
+import model.ea.Population;
 
 /**
  * takes the first two individuals from the list of parents
  * and creates children with a half of each parent
- * @return a List of new created children
  */
+@SuppressWarnings("unused")
 public class SequentialRecombination implements IRecombinationOperator {
-
 	@Override
-	public List<Individual> recombine(List<Individual> parents) {
+	public Population recombine(Population parents) {
+		Population children = new Population();
 		
-        List<Individual> children = new ArrayList<Individual>();
-		
-		int numberOfDays = parents.get(0).getDayRosters().size();
+		int numberOfDays = parents.getPool().get(0).getDayRosters().size();
 		int half = numberOfDays/2;
 		
-		Individual parent1 = parents.get(0);
-		Individual parent2 = parents.get(1);
-		
-		Individual child1 = new Individual();
-		child1 = parent1.copy(parent1);
+		Individual parent1 = parents.getPool().get(0);
+		Individual parent2 = parents.getPool().get(1);
+
+        Individual child1 = Individual.copy(parent1);
 		for (int i = half; i < numberOfDays; i++) {
 			child1.getDayRosters().set(i, parent2.getDayRosters().get(i)); 
 		}
-	    children.add(child1); 
+	    children.addIndividualToPool(child1);
 	    
-	    Individual child2 = new Individual();
-	    child2 = parent2.copy(parent2);
+	    Individual child2 = Individual.copy(parent2);
 	    for (int i = half; i < numberOfDays; i++) {
 			child1.getDayRosters().set(i, parent1.getDayRosters().get(i)); 
 		}
-	    children.add(child2);
+	    children.addIndividualToPool(child2);
 		
 		return children;
 	}
-
 }
