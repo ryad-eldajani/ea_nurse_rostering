@@ -15,7 +15,8 @@ public class BestSelectionOperator implements IEnvironmentSelectionOperator {
 	@Override
 	public void select(Population population) {
 		population.sortByFitness();
-		for (int i = numberOfSelections; i < population.getPool().size(); i++) {
+		int poolSize = population.getPool().size();
+		for (int i = poolSize-1; i >= numberOfSelections; i--) {
 			population.getPool().remove(i);
 		}
 	}

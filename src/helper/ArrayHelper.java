@@ -1,5 +1,7 @@
 package helper;
 
+import java.util.List;
+
 /**
  * Helper methods for arrays.
  */
@@ -44,7 +46,7 @@ public class ArrayHelper {
      * @param array Array to reverses
      * @return Reversed array
      */
-    public Object[] reverse(Object[] array) {
+    Object[] reverse(Object[] array) {
         for (int i = 0; i < array.length / 2; i++) {
             Object temp = array[i];
             array[i] = array[array.length - i - 1];
@@ -60,7 +62,7 @@ public class ArrayHelper {
      * @param separator Separator
      * @return Array as string
      */
-    public String getString(Object[] array, String separator) {
+    String getString(Object[] array, String separator) {
         StringBuilder out = new StringBuilder();
 
         for (int i = 0; i < array.length; i++) {
@@ -71,5 +73,19 @@ public class ArrayHelper {
         }
 
         return out.toString();
+    }
+
+    /**
+     * Removes an element from a list by value.
+     * @param list List instance
+     * @param value Value to remove
+     */
+    public void removeValue(List list, Object value) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).equals(value)) {
+                list.remove(i);
+                return;
+            }
+        }
     }
 }

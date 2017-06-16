@@ -80,7 +80,7 @@ public class EvolutionaryCycle {
         // evolutionize cycle, while termination condition is not met
         while (!isTerminationCondition()) {
             // get selection of mating individuals
-            Population parents = matingSelectionOperator.select(Population.copy(children));
+            Population parents = matingSelectionOperator.select(children);
             children = Population.copy(parents);
 
             // recombine individuals (if used)
