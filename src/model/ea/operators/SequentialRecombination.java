@@ -17,7 +17,7 @@ import model.ea.Population;
 public class SequentialRecombination implements IRecombinationOperator {
 	@Override
 	public Population recombine(Population parents) {
-		Population children = new Population();
+		Population children = Population.copy(parents);
 		
 		int numberOfDays = parents.getPool().get(0).getDayRosters().size();
 		int half = numberOfDays/2;
