@@ -2,7 +2,6 @@ package model.ea.operators;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import helper.RandomHelper;
 import model.ea.Individual;
