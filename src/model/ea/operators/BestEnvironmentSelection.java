@@ -3,8 +3,7 @@ package model.ea.operators;
 import helper.ConfigurationHelper;
 import model.ea.Population;
 
-@SuppressWarnings("unused")
-public class BestSelectionOperator implements IEnvironmentSelectionOperator {
+public class BestEnvironmentSelection implements IEnvironmentSelection {
 	 private int numberOfSelections = ConfigurationHelper.getInstance().getPropertyInteger("IndividualsPerPopulation", 10);
 	 
 	/**
