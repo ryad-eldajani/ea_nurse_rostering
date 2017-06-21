@@ -5,11 +5,13 @@ import model.ea.Individual;
 import model.ea.Population;
 import model.schedule.DayRoster;
 
-/**
- * Recombines days of two individuals to create a whole new individual.
- */
-@SuppressWarnings("unused")
-public class RandomRecombinationOperator implements IRecombinationOperator {
+public class RandomRecombination implements IRecombination {
+	
+	/**
+	 * Recombines days of two individuals to create a whole new individual.
+	 * @param parents: the parents selected with the Mating Selection
+	 * @return children: a new population instance containing the new created children
+	 */
 	@Override
 	public Population recombine(Population parents) {
 		Population children = new Population();

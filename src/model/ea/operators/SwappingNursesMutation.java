@@ -9,12 +9,16 @@ import model.ea.Population;
 import model.schedule.Employee;
 import model.schedule.ShiftType;
 
-/**
- * For every individual of the selection swap the first nurse of shift x on a random day
- * with the first nurse of shift x on another random day.
- */
-@SuppressWarnings("unused")
-public class SwappingNursesMutation implements IMutationOperator {
+
+
+public class SwappingNursesMutation implements IMutation {
+	
+	/**
+	 * For every individual of the selection swap the first nurse of shift x on a random day
+	 * with the first nurse of shift x on another random day.
+	 * @param selection: either the new created children or, in the case without recombination, mutate the selected parents
+	 * @return selection: the by mutation changed selection
+	 */
 	@Override
 	public Population mutate(Population selection) {
 		int numberOfDays = selection.getPool().get(0).getDayRosters().size();

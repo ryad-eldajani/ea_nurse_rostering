@@ -3,10 +3,10 @@ package model.ea;
 import helper.ClassLoaderHelper;
 import helper.ConfigurationHelper;
 import helper.TuiHelper;
-import model.ea.operators.IEnvironmentSelectionOperator;
-import model.ea.operators.IMatingSelectionOperator;
-import model.ea.operators.IMutationOperator;
-import model.ea.operators.IRecombinationOperator;
+import model.ea.operators.IEnvironmentSelection;
+import model.ea.operators.IMatingSelection;
+import model.ea.operators.IMutation;
+import model.ea.operators.IRecombination;
 import model.schedule.SchedulingPeriod;
 
 /**
@@ -36,22 +36,22 @@ public class EvolutionaryCycle {
     /**
      * Holds the mating selection operator instance.
      */
-    private IMatingSelectionOperator matingSelectionOperator = ClassLoaderHelper.getInstance().getMatingSelectionOperator();
+    private IMatingSelection matingSelectionOperator = ClassLoaderHelper.getInstance().getMatingSelectionOperator();
 
     /**
      * Holds the recombination operator instance.
      */
-    private IRecombinationOperator recombinationOperator = ClassLoaderHelper.getInstance().getRecombinationOperator();
+    private IRecombination recombinationOperator = ClassLoaderHelper.getInstance().getRecombinationOperator();
 
     /**
      * Holds the mutation operator instance.
      */
-    private IMutationOperator mutationOperator = ClassLoaderHelper.getInstance().getMutationOperator();
+    private IMutation mutationOperator = ClassLoaderHelper.getInstance().getMutationOperator();
 
     /**
      * Holds the environment selection operator instance.
      */
-    private IEnvironmentSelectionOperator environmentSelectionOperator = ClassLoaderHelper.getInstance().getEnvironmentSelectionOperator();
+    private IEnvironmentSelection environmentSelectionOperator = ClassLoaderHelper.getInstance().getEnvironmentSelectionOperator();
 
     /**
      * Holds the initializing population (for benchmarking purposes against last solutions).
@@ -88,10 +88,18 @@ public class EvolutionaryCycle {
             if (useRecombination) {
                  children = recombinationOperator.recombine(parents);
             }
+            children.benchmark();
 
             // mutate individuals (if used)
             if (useMutation) {
-            	children = mutationOperator.mutate(children);
+            	// if recombination was used, mutate the new created children
+            	if (useRecombination){
+            		children = mutationOperator.mutate(children);
+            	}
+            	// if not, mutate the selected parents
+            	else{
+            		children = mutationOperator.mutate(parents);
+            	}
             }
 
             // benchmark new generation
@@ -100,6 +108,7 @@ public class EvolutionaryCycle {
 
             // get environmental selection from new generation
             environmentSelectionOperator.select(population);
+            population.benchmark();
         }
 
         // cycle is terminated, return the latest solution

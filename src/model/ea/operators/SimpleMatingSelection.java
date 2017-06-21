@@ -6,7 +6,7 @@ import model.ea.Population;
  * Implements a simple mating selection operator.
  */
 @SuppressWarnings("unused")
-public class SimpleMatingSelectionOperator implements IMatingSelectionOperator {
+public class SimpleMatingSelection implements IMatingSelection {
     /**
      * Selects the first 50% of the population.
      * @param population The parent population.

@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Implements a simple environmental selection operator.
  */
-public class SimpleEnvironmentSelectionOperator implements IEnvironmentSelectionOperator {
+public class SimpleEnvironmentSelection implements IEnvironmentSelection {
     /**
      * Number of individuals per population.
      */

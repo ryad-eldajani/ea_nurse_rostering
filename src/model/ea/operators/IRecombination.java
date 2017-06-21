@@ -5,7 +5,7 @@ import model.ea.Population;
 /**
  * Defines the general interface for a recombination operator.
  */
-public interface IRecombinationOperator {
+public interface IRecombination {
     /**
      * Recombines individuals.
      */

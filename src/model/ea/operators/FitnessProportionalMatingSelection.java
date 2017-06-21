@@ -6,7 +6,7 @@ import helper.ConfigurationHelper;
 import model.ea.Population;
 
 @SuppressWarnings("unused")
-public class FitnessProportionalMatingSelectionOperator implements IMatingSelectionOperator {
+public class FitnessProportionalMatingSelection implements IMatingSelection {
 	private int numberOfParents = ConfigurationHelper.getInstance().getPropertyInteger("NumberOfParents", 6);
 
 	@Override

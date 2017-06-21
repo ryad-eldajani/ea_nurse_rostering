@@ -8,11 +8,15 @@ import helper.ConfigurationHelper;
 import helper.RandomHelper;
 import model.ea.Population;
 
-@SuppressWarnings("unused")
-public class TournamentSelectionOperator implements IMatingSelectionOperator {
+public class TournamentMatingSelection implements IMatingSelection {
 	private int numberOfParents = ConfigurationHelper.getInstance().getPropertyInteger("NumberOfParents", 6);
 	private int numberOfDirectDuels = ConfigurationHelper.getInstance().getPropertyInteger("NumberOfDirectDuels", 3);
 	
+	/**
+     * @param population: the initial population of the generation
+     * @return selection: a list of the selected individuals to become parents
+     * Algorithm matches the q-times Tournament Selection
+     */
 	@Override
 	public Population select(Population population) {
 		Population selection = new Population();

@@ -5,7 +5,7 @@ import model.ea.Population;
 /**
  * Defines the general interface for an environmental selection operator.
  */
-public interface IEnvironmentSelectionOperator {
+public interface IEnvironmentSelection {
     /**
      * Returns an environmental selection for a population.
      * @param population Old generation Population instance

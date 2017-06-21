@@ -9,12 +9,13 @@ import model.ea.Individual;
 import model.ea.Population;
 
 
-public class qStepwiseTournamentSelection implements IEnvironmentSelectionOperator {
+public class TournamentEnvironmentSelection implements IEnvironmentSelection {
     private int numberOfDirectDuels = ConfigurationHelper.getInstance().getPropertyInteger("NumberOfDirectDuels", 3);
     private int numberOfSelections = ConfigurationHelper.getInstance().getPropertyInteger("IndividualsPerPopulation", 10);
 
     /**
      * @param currentPopulation: the population after mutation and recombination
+     * Algorithm matches the q-Stepwise Tournament Selection
      */
     @Override
     public void select(Population currentPopulation) {

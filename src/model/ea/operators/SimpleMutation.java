@@ -9,7 +9,7 @@ import java.util.List;
  * Implements a simple mutation operator.
  */
 @SuppressWarnings("unused")
-public class SimpleMutationOperator implements IMutationOperator {
+public class SimpleMutation implements IMutation {
     @Override
     public Population mutate(Population individuals) {
         // TODO: Implement mutation

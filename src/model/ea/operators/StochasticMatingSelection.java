@@ -5,10 +5,14 @@ import java.util.Random;
 import helper.ConfigurationHelper;
 import model.ea.Population;
 
-@SuppressWarnings("unused")
-public class StochasticUniversalSampling implements IMatingSelectionOperator {
+public class StochasticMatingSelection implements IMatingSelection {
 	private int numberOfParents = ConfigurationHelper.getInstance().getPropertyInteger("NumberOfParents", 6);
 	
+	/**
+     * @param population: the initial population of the generation
+     * @return selection: a list of the selected individuals to become parents
+     * Algorithm matches the Stochastic Universal Sampling
+     */
 	@Override
 	public Population select(Population population) {
 		

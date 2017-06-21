@@ -1,6 +1,3 @@
-/**
- * 
- */
 package model.ea.operators;
 
 import java.util.ArrayList;
@@ -12,12 +9,7 @@ import helper.ConfigurationHelper;
 import model.ea.Individual;
 import model.ea.Population;
 
-
-/**
- * @author nicolasmaeke
- *
- */
-public class CommaSelection implements IEnvironmentSelectionOperator {
+public class CommaEnvironmentSelection implements IEnvironmentSelection {
 	 private int individualsPerPopulation = ConfigurationHelper.getInstance().getPropertyInteger("IndividualsPerPopulation", 10);
 	 
 	 /** 

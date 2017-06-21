@@ -10,7 +10,7 @@ import model.schedule.DayRoster;
  * and swaps one randomly selected day roster.
  */
 @SuppressWarnings("unused")
-public class SingleDayRecombinationOperator implements IRecombinationOperator {
+public class SingleDayRecombination implements IRecombination {
 
 	@Override
 	public Population recombine(Population parents) {
