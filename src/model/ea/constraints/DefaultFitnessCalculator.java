@@ -32,6 +32,7 @@ public class DefaultFitnessCalculator implements IFitnessCalculator {
         fitness += getDeviationNumConsecutiveDays();
         fitness += getDeviationWorkingWeekends();
         fitness += getDeviationUnwantedPatterns();
+        fitness += getDeviationOffRequests();
 
         return fitness;
     }
@@ -172,7 +173,7 @@ public class DefaultFitnessCalculator implements IFitnessCalculator {
     }
 
     /**
-     * Calculates the deviations for unwanted patterns  for each employee.
+     * Calculates the deviations for unwanted patterns for each employee.
      * @return Deviation
      */
     private float getDeviationUnwantedPatterns() {
@@ -181,6 +182,22 @@ public class DefaultFitnessCalculator implements IFitnessCalculator {
         // calculate deviation for each employee
         for (Employee employee: period.getEmployees()) {
             deviation += individual.getUnwantedPatternDeviation(employee);
+        }
+
+        return deviation;
+    }
+
+    /**
+     * Calculates the deviations for day- and shift-off requests for
+     * each employee.
+     * @return Deviation
+     */
+    private float getDeviationOffRequests() {
+        float deviation = 0;
+
+        for (Employee employee: period.getEmployees()) {
+            deviation += individual.getDayOffRequestsDeviation(employee);
+            deviation += individual.getShiftOffRequestsDeviation(employee);
         }
 
         return deviation;

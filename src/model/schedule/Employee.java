@@ -89,6 +89,14 @@ public class Employee {
         this.skills = skills;
     }
 
+    public List<DayOff> getDayOffRequests() {
+        return dayOffRequests;
+    }
+
+    public List<ShiftOff> getShiftOffRequests() {
+        return shiftOffRequests;
+    }
+
     /**
      * Returns true, if employee has required skills for a specific shift type.
      * @param shiftType ShiftType instance

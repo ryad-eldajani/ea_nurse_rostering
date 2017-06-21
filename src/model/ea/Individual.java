@@ -624,6 +624,52 @@ public class Individual {
         }
     }
 
+    /**
+     * Calculates the day-off requests deviation per employee.
+     * @param employee Employee instance
+     * @return Deviation
+     */
+    public float getDayOffRequestsDeviation(Employee employee) {
+        float deviation = 0;
+
+        for (DayOff dayOff: employee.getDayOffRequests()) {
+            for (Map.Entry<DayRoster, Boolean> assignment: getAssignments(employee).entrySet()) {
+                if (assignment.getKey().getDate().equals(dayOff.getDate())) {
+                    if (assignment.getValue().equals(true)) {
+                        deviation += dayOff.getWeight();
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return deviation;
+    }
+
+    /**
+     * Calculates the shift-off requests deviation per employee.
+     * @param employee Employee instance
+     * @return Deviation
+     */
+    public float getShiftOffRequestsDeviation(Employee employee) {
+        float deviation = 0;
+
+        for (ShiftOff shiftOff: employee.getShiftOffRequests()) {
+            for (Map.Entry<DayRoster, Boolean> assignment: getAssignments(employee).entrySet()) {
+                if (assignment.getKey().getDate().equals(shiftOff.getDate())) {
+                    if (assignment.getValue().equals(true)) {
+                        deviation += shiftOff.getWeight();
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return deviation;
+    }
+
     @Override
     public String toString() {
         String nl = System.getProperty("line.separator");
