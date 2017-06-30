@@ -113,11 +113,11 @@ public class TuiHelper {
         System.out.println("Best initial solution: " + bestInitialized.getId()
                 + ", fitness: " + bestInitialized.getFitness());
         System.out.println(String.format("Fitness improvement: %d -> %d "
-            + "(absolute: %d, relative: %d%%)",
+            + "(absolute: %d, relative: %s%%)",
                 Math.round(bestInitialized.getFitness()),
                 Math.round(best.getFitness()),
                 Math.round(bestInitialized.getFitness()-best.getFitness()),
-                Math.round((1-best.getFitness()/bestInitialized.getFitness())*100)));
+                (new DecimalFormat("0.00")).format((1-best.getFitness()/bestInitialized.getFitness())*100)));
         System.out.println("Best evolutionized solution: " + best);
     }
 }
