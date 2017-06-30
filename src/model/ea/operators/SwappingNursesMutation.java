@@ -9,10 +9,8 @@ import model.ea.Population;
 import model.schedule.Employee;
 import model.schedule.ShiftType;
 
-
-
+@SuppressWarnings("unusued")
 public class SwappingNursesMutation implements IMutation {
-	
 	/**
 	 * For every individual of the selection swap the first nurse of shift x on a random day
 	 * with the first nurse of shift x on another random day.

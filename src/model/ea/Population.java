@@ -69,10 +69,10 @@ public class Population {
      * Returns the overall fitness of this population. The lower the value, the better.
      * @return Overall fitness.
      */
-    public double getOverallFitness() {
+    public double getOverallFitness(boolean forceRecalculation) {
         // if overall fitness value is not calculated, benchmark this population now
         if (overallFitness == 0) {
-            benchmark();
+            benchmark(forceRecalculation);
         }
 
         return overallFitness;
@@ -100,12 +100,20 @@ public class Population {
 
     /**
      * Calculates the fitness of every individual.
+     * @param forceRecalculation If true, forces recalculation
      */
-    void benchmark() {
+    void benchmark(boolean forceRecalculation) {
         overallFitness = 0;
         for (Individual individual: pool) {
-            overallFitness += individual.getFitness();
+            overallFitness += individual.getFitness(forceRecalculation);
         }
+    }
+
+    /**
+     * Calculates the fitness of every individual.
+     */
+    void benchmark() {
+        benchmark(true);
     }
 
     /**

@@ -88,17 +88,15 @@ public class EvolutionaryCycle {
             if (useRecombination) {
                  children = recombinationOperator.recombine(parents);
             }
-            children.benchmark();
 
             // mutate individuals (if used)
             if (useMutation) {
             	// if recombination was used, mutate the new created children
-            	if (useRecombination){
+            	if (useRecombination) {
             		children = mutationOperator.mutate(children);
-            	}
-            	// if not, mutate the selected parents
-            	else{
-            		children = mutationOperator.mutate(parents);
+            	} else {
+                    // if not, mutate the selected parents
+                    children = mutationOperator.mutate(parents);
             	}
             }
 

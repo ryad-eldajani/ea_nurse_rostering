@@ -44,6 +44,14 @@ public class RandomHelper {
     }
 
     /**
+     * Returns random true or false.
+     * @return Random boolean
+     */
+    public boolean getBoolean() {
+        return getInt(0, 2) == 1;
+    }
+
+    /**
      * Returns a random integer between 0 (inclusive) and max (exclusive).
      * @param max Maximum random integer
      * @return Random integer between 0 and max

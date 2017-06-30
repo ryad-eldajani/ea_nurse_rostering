@@ -5,6 +5,7 @@ import model.ea.Individual;
 import model.ea.Population;
 import model.schedule.DayRoster;
 
+@SuppressWarnings("unused")
 public class RandomRecombination implements IRecombination {
 	
 	/**
@@ -21,8 +22,8 @@ public class RandomRecombination implements IRecombination {
             int randomIndividual1;
             int randomIndividual2;
             do {
-                randomIndividual1 = RandomHelper.getInstance().getInt(parents.getPool().size()-1);
-                randomIndividual2 = RandomHelper.getInstance().getInt(parents.getPool().size()-1);
+                randomIndividual1 = RandomHelper.getInstance().getInt(parents.getPool().size());
+                randomIndividual2 = RandomHelper.getInstance().getInt(parents.getPool().size());
             } while (randomIndividual1 == randomIndividual2);
 
             Individual individual1 = parents.getPool().get(randomIndividual1);
@@ -32,7 +33,7 @@ public class RandomRecombination implements IRecombination {
             newIndividual.resetRosters();
 
             for (int day = 0; day < individual1.getDayRosters().size(); day++) {
-                DayRoster randomRoster = RandomHelper.getInstance().getInt(0, 1) == 0
+                DayRoster randomRoster = RandomHelper.getInstance().getBoolean()
                         ? individual1.getDayRosters().get(day)
                         : individual2.getDayRosters().get(day);
 
