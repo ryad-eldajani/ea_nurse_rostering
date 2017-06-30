@@ -109,8 +109,12 @@ public class EvolutionaryCycle {
             population.benchmark();
         }
 
-        // cycle is terminated, return the latest solution
-        return population;
+        // cycle is terminated, return the latest solution or initialized
+        // population, of solution is not better
+        return population.getBestIndividual().getFitness()
+                <= initPopulation.getBestIndividual().getFitness()
+            ? population
+            : initPopulation;
     }
 
     /**
