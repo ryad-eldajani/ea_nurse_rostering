@@ -22,8 +22,8 @@ public class SwappingNursesMutation implements IMutation {
 		int numberOfDays = selection.getPool().get(0).getDayRosters().size();
 
 		// random number between zero and the number of days in a schedule
-		int randDay1 = RandomHelper.getInstance().getInt(numberOfDays - 1);
-		int randDay2 = RandomHelper.getInstance().getInt(numberOfDays - 1);
+		int randDay1 = RandomHelper.getInstance().getInt(numberOfDays);
+		int randDay2 = RandomHelper.getInstance().getInt(numberOfDays);
 
 		for (Individual individual : selection.getPool()) {
             List<Map<ShiftType, Employee>> dayRoster1 = individual.getDayRosters().get(randDay1).getDayRoster();
@@ -34,7 +34,7 @@ public class SwappingNursesMutation implements IMutation {
                     ? dayRoster1.size() : dayRoster2.size();
 
 			// random number between zero and the number of shifts in a day roster
-			int randShift = RandomHelper.getInstance().getInt(numberOfShifts - 1);
+			int randShift = RandomHelper.getInstance().getInt(numberOfShifts);
 
             // the nurse of a random shift on a random day
             Employee nurse1 = dayRoster1.get(randShift).entrySet().iterator().next().getValue();

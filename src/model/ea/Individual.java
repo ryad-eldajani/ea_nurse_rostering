@@ -156,10 +156,20 @@ public class Individual {
                 }
             }
 
-            // check, if size of each planned employees
+            // check, if size of each planned employees is equal preferred counts and each employee assigned only once
+            List<Employee> employeesAssigned = new ArrayList<Employee>();
             for (Map.Entry<ShiftType, List<Employee>> planned: plannedEmployees.entrySet()) {
                 ShiftType shiftType1 = planned.getKey();
                 List<Employee> employees = planned.getValue();
+
+                for (Employee employee : employees) {
+                    if (employeesAssigned.contains(employee)) {
+                        // employee is assigned today, solution infeasible
+                        return false;
+                    } else {
+                        employeesAssigned.add(employee);
+                    }
+                }
 
                 if (!preferredCounts.containsKey(shiftType1) || !(employees.size() == preferredCounts.get(shiftType1))) {
                     return false;

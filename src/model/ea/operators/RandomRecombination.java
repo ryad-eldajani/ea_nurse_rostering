@@ -39,7 +39,12 @@ public class RandomRecombination implements IRecombination {
 
                 newIndividual.addDayRoster(randomRoster);
             }
-            newIndividual.isFeasible();
+
+            // if solution is unfeasible, recombine again
+            if (!newIndividual.isFeasible()) {
+                return recombine(parents);
+            }
+
             newIndividual.getFitness(true);
 
             children.addIndividualToPool(newIndividual);
