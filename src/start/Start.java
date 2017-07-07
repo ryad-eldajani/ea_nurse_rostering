@@ -38,7 +38,7 @@ public class Start {
      */
     public static void main(String[] args) {
         // read scheduling period information
-        SchedulingPeriod period = getInstance().parseSchedulingPeriod();
+        SchedulingPeriod period = getInstance().parseSchedulingPeriod(args.length == 1 ? args[0] : null);
 
         // create and run the evolutionary cycle
         EvolutionaryCycle evolutionaryCycle = new EvolutionaryCycle();
@@ -73,13 +73,19 @@ public class Start {
 
     /**
      * Instantiates the parser, loads and returns a scheduling period definitions.
+     * @param fileOverride override from JVM arguments (if any)
      * @return SchedulingPeriod instance or null.
      */
-    private SchedulingPeriod parseSchedulingPeriod() {
+    private SchedulingPeriod parseSchedulingPeriod(String fileOverride) {
         IParser parser = ClassLoaderHelper.getInstance().getParser();
 
+        String filePath = "data/" + ConfigurationHelper.getInstance()
+                .getProperty("PeriodFile", "toy1.xml");
+        if (fileOverride != null) {
+            filePath = fileOverride;
+        }
+
         // try to load and return the desired scheduling period
-        return parser.loadFile("data/"
-                + ConfigurationHelper.getInstance().getProperty("PeriodFile", "toy1.xml"));
+        return parser.loadFile(filePath);
     }
 }
