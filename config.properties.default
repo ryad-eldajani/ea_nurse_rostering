@@ -23,3 +23,4 @@ MatingSelectionOperator=SimpleMatingSelectionOperator
 EnvironmentSelectionOperator=SimpleEnvironmentSelectionOperator
 MutationOperator=SimpleMutationOperator
 RecombinationOperator=SimpleRecombinationOperator
+NumberOfParents=6
